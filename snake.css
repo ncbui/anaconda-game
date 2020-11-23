@@ -1,0 +1,12 @@
+body {
+  background-color: black;
+}
+
+#board {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  border: solid 1px yellow;
+  border-radius: 10px;
+  box-shadow: 0 0 50px rgba(255, 255, 0, .3) ;
+}
