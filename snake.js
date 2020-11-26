@@ -425,8 +425,7 @@ class Game {
     if (isDead) {
       window.clearInterval(this.timerId);
       window.removeEventListener("keydown", this.keyListener);
-      // FIXME: add a snake dead message or restart button
-      button.innerText = "Oh no! Restart snake";
+      button.innerText = "Oh no! Restart";
       button.addEventListener("click", () => document.location.href = "");
       return;
     }
