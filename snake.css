@@ -4,9 +4,25 @@ body {
 
 #board {
   position: absolute;
+  top: 60vh;
   left: 50%;
-  top: 50%;
   border: solid 1px yellow;
   border-radius: 10px;
   box-shadow: 0 0 50px rgba(255, 255, 0, .3) ;
+}
+
+button {
+  border: solid 1px yellow;
+  border-radius: 5px;
+  box-shadow: 0 0 10px rgba(255, 255, 0, .3) ;
+  background-color: yellow;
+  font-size: 25px;
+}
+
+#rules {
+    border-radius: 5px;
+    padding: 10px;
+    box-shadow: 0 0 10px rgba(255, 255, 0, .3) ;
+    font-size: 25px;
+    color: rgb(240, 248, 255, .4);
 }
