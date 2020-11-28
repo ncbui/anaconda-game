@@ -3,21 +3,25 @@ body {
   color: rgb(240, 248, 255, .8);
 }
 
+#info {
+    margin-bottom: -2rem;
+}
+
 #board {
   position: absolute;
-  top: 60vh;
+  top: 46vh;
   left: 50%;
   border: solid 1px yellow;
   border-radius: 10px;
   box-shadow: 0 0 50px rgba(255, 255, 0, .3) ;
 }
 
-button {
-  border: solid 1px yellow;
+#start {
+  border: solid 1px yellow; 
   border-radius: 5px;
   box-shadow: 0 0 10px rgba(255, 255, 0, .3) ;
   background-color: yellow;
-  font-size: 25px;
+  font-size: 1rem;
 }
 
 #rules {
@@ -26,4 +30,8 @@ button {
     box-shadow: 0 0 10px rgba(255, 255, 0, .3) ;
     font-size: 25px;
     color: rgb(240, 248, 255, .8);
+}
+
+.dropdown {
+    margin-top: 1rem;
 }
