@@ -14,3 +14,21 @@
 
 5. Make Food Creation Smarter 
     modify refillFood() in Snake class
+
+6. Add Start Button
+    onclick starts game
+    when snake dies, button text updates and onclick refreshes page
+
+7. Build Easy Mode Snake
+    subclassed snake to make snakePrime
+    snakePrime has a chance to grow twice as big when eating food 
+    will also detect if it will run into walls and attempt to avoid them.
+
+8. Build Super Easy Mode Snake
+    can detect its own body
+    also cheats and sometimes doesn't lose if it bites itself
+
+9. Build Chaos Mode Snake
+    picks a random direction to move in every 12 moves
+
+10. Build a game mode toggler
