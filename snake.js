@@ -2,8 +2,8 @@
 
 /** Multiplayer Snake game. */
 
-const WIDTH = 24;
-const HEIGHT = 26;
+const WIDTH = 30;
+const HEIGHT = 30;
 
 // translate game board size to pixels
 const SCALE = 12;
@@ -180,6 +180,14 @@ class Snake {
     return self.some(me => head.x === me.x && head.y === me.y);
   }
 
+  /** Did the snake crash into the other snake? t/f 
+   * @param otherSnake - other Snake
+   */
+  checkCrashIntoOtherSnake(otherSnake, head = this.head()) {
+    console.log(otherSnake.parts.some(other => other.x === head.x && other.y === head.y));
+    return otherSnake.parts.some(other => other.x === head.x && other.y === head.y);
+  }
+
   /** Move snake one move in its current direction. */
 
   move() {
@@ -232,7 +240,7 @@ class Snake {
     this.nextDir = dir;
   }
 
-  /** Randomly change direction:
+  /** (Pseudo)-Randomly change direction:
 *
 * @param dir - current direction
 *
@@ -435,8 +443,8 @@ class SnakeChaos extends SnakePrime {
  */
 
 class Game {
-  constructor(snake, numFood = 3) {
-    this.snake = snake;
+  constructor(snakes, numFood = 3) {
+    this.snakes = snakes;
 
     // array of Pellet instances on board
     this.food = [];
@@ -446,15 +454,15 @@ class Game {
     this.tickCount = 0;
   }
 
-  /** Clear game: reset */
+  // /** FIXME: Clear game: reset */
 
-  clear() {
-    this.food = [];
-    this.numFood = numFood;
+  // clear() {
+  //   this.food = [];
+  //   this.numFood = numFood;
 
-    this.timerId = null;
-    this.tickCount = 0;
-  }
+  //   this.timerId = null;
+  //   this.tickCount = 0;
+  // }
 
   /** Start game: add keyboard listener and start timer. */
 
@@ -468,14 +476,14 @@ class Game {
   refillFood() {
     while (this.food.length < this.numFood) {
       let newPellet = Pellet.newRandom()
-      if (!this.snake.contains(newPellet)) this.food.push(newPellet);
+      if (this.snakes.every(snake => !snake.contains(newPellet))) this.food.push(newPellet);
     }
   }
 
   /** Let snake try to handle the keystroke. */
 
   keyListener(evt) {
-    this.snake.handleKey(evt.key);
+    for (const snake of this.snakes) snake.handleKey(evt.key);
   }
 
   /** Remove Pellet from board. */
@@ -495,7 +503,16 @@ class Game {
 
   tick() {
 
-    const isDead = this.snake.checkCrashIntoWall() || this.snake.checkCrashIntoSelf();
+    const isDead = this.snakes.some(snake => {
+      return (
+        snake.checkCrashIntoWall() ||
+        snake.checkCrashIntoSelf()  ||
+        // find other snake, check if snake has crashed into other snake
+        this.snakes.filter(other => other !== snake).some(other => snake.checkCrashIntoOtherSnake(other))
+      )}
+    )
+
+    console.log(isDead)
 
     if (isDead) {
       window.clearInterval(this.timerId);
@@ -510,11 +527,13 @@ class Game {
       f.draw();
     }
 
-    this.snake.move();
-    this.snake.draw();
-
-    const pellet = this.snake.eats(this.food);
-    if (pellet) this.removeFood(pellet);
+    for (const snake of this.snakes) {
+      snake.move();
+      snake.draw();
+      
+      const pellet = snake.eats(this.food);
+      if (pellet) this.removeFood(pellet);
+  }
 
     this.refillFood();
   }
@@ -523,21 +542,29 @@ class Game {
 
 function gameStart(){
   /// Set up snakes, game, and start game
+  startBtn.removeEventListener("click", gameStart);
 
   // console.log($('.dropdown')[0].innerText);
   const mode = $('.dropdown')[0].innerText;
 
-  const snake = () => {
+  const p1Snake = () => {
     if (mode.includes('Chaotic')) return new SnakeChaos(PLAYER_ONE_KEYMAP, new Point(12, 12));
     if (mode.includes('Classic')) return new Snake(PLAYER_ONE_KEYMAP, new Point(12, 12));
     if (mode.includes('Play')) $('.dropdown-toggle').html("Easy");
-    return new SnakeDoublePrime(PLAYER_ONE_KEYMAP, new Point(12, 12))
+    return new SnakePrime(PLAYER_ONE_KEYMAP, new Point(12, 12))
   }
-  console.log(snake())
 
-  startBtn.removeEventListener("click", gameStart);
+  const p2Snake = () => {
+    if (mode.includes('Chaotic')) return new SnakeDoublePrime(PLAYER_TWO_KEYMAP, new Point(6, 6));
+    if (mode.includes('Classic')) return new SnakeDoublePrime(PLAYER_TWO_KEYMAP, new Point(6, 6));
+    return new SnakeChaos(PLAYER_TWO_KEYMAP, new Point(6, 6))
+  }
+  console.log(p1Snake())
 
-  const game = new Game(snake());
+  const snakes = [p1Snake(), p2Snake()]
+
+  
+  const game = new Game(snakes);
 
   game.start();
 }
