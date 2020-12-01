@@ -184,7 +184,6 @@ class Snake {
    * @param otherSnake - other Snake
    */
   checkCrashIntoOtherSnake(otherSnake, head = this.head()) {
-    console.log(otherSnake.parts.some(other => other.x === head.x && other.y === head.y));
     return otherSnake.parts.some(other => other.x === head.x && other.y === head.y);
   }
 
@@ -395,8 +394,8 @@ class SnakeDoublePrime extends SnakePrime {
  *
  **/
 
-class SnakeChaos extends SnakePrime {
-  constructor(keymap, start, dir, color = "green") {
+class SnakeChaos extends SnakeDoublePrime {
+  constructor(keymap, start, dir, color = "yellow") {
     super(keymap, start, dir, color) // inherit from snake
     this.tickCount = 0;
   }
@@ -407,12 +406,11 @@ class SnakeChaos extends SnakePrime {
     const { x, y } = this.head();
 
     this.tickCount % 16 === 0 ? this.changeRandomDir(this.dir) : this.dir = this.nextDir
-    // Calculate where the new head will be, and add that point to front of body
 
     this.dir = this.nextDir;
     let newHead = this._calculateNewHead(this.head());
 
-    while (newHead.willCrashIntoWall()) {
+    while (newHead.willCrashIntoWall() || this.checkCrashIntoSelf(newHead)) {
       this.changeRandomDir(this.dir);
       this.dir = this.nextDir; // snake's current direction
       if (this.dir === "left") newHead = new Point(x - 1, y);
@@ -453,18 +451,6 @@ class Game {
     this.timerId = null;
     this.tickCount = 0;
   }
-
-  // /** FIXME: Clear game: reset */
-
-  // clear() {
-  //   this.food = [];
-  //   this.numFood = numFood;
-
-  //   this.timerId = null;
-  //   this.tickCount = 0;
-  // }
-
-  /** Start game: add keyboard listener and start timer. */
 
   start() {
     document.addEventListener("keydown", (evt) => this.keyListener(evt));
@@ -512,13 +498,12 @@ class Game {
       )}
     )
 
-    console.log(isDead)
-
     if (isDead) {
       window.clearInterval(this.timerId);
       window.removeEventListener("keydown", this.keyListener);
+      ctx.fillText("GAME OVER", (WIDTH * SCALE ) / 2 , ( HEIGHT * SCALE )/ 2 )
       startBtn.innerText = "Oh no! Restart";
-      startBtn.addEventListener("click", () => document.location.href = "");
+      startBtn.addEventListener("click", () => document.location.href = ""); // FIXME: clear board without refresh
       return;
     }
 
@@ -555,13 +540,14 @@ function gameStart(){
   }
 
   const p2Snake = () => {
-    if (mode.includes('Chaotic')) return new SnakeDoublePrime(PLAYER_TWO_KEYMAP, new Point(6, 6));
-    if (mode.includes('Classic')) return new SnakeDoublePrime(PLAYER_TWO_KEYMAP, new Point(6, 6));
-    return new SnakeChaos(PLAYER_TWO_KEYMAP, new Point(6, 6))
+    // if (mode.includes('Chaotic')) return new SnakeChaos(PLAYER_TWO_KEYMAP, new Point(6, 6));
+    if (mode.includes('Classic')) return;
+    return new SnakeChaos(PLAYER_TWO_KEYMAP, new Point(6, 6), "left", "thistle")
   }
   console.log(p1Snake())
 
-  const snakes = [p1Snake(), p2Snake()]
+  const snakes = [p1Snake()];
+  if (p2Snake()) snakes.push(p2Snake());
 
   
   const game = new Game(snakes);
