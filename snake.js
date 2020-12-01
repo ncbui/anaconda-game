@@ -173,34 +173,16 @@ class Snake {
 
   /** Did the snake crash into self? t/f */
 
-  checkCrashIntoSelf() {
-    const { x, y } = this.head();
+  checkCrashIntoSelf(head = this.head()) {
+    const self = this.parts.slice(1);
 
-    // check if the new location for head will run into body
-    // FIXME: DRY
-    let newHead;
-    if (this.nextDir === "left") newHead = new Point(x - 1, y);
-    if (this.nextDir === "right") newHead = new Point(x + 1, y);
-    if (this.nextDir === "up") newHead = new Point(x, y - 1);
-    if (this.nextDir === "down") newHead = new Point(x, y + 1);
-
-    return this.contains(newHead)
+    return self.some(me => head.x === me.x && head.y === me.y);
   }
-
-
 
   /** Move snake one move in its current direction. */
 
   move() {
-    const { x, y } = this.head();
-
-    // Calculate where the new head will be, and add that point to front of body
-    let newHead;
-    this.dir = this.nextDir;
-    if (this.dir === "left") newHead = new Point(x - 1, y);
-    if (this.dir === "right") newHead = new Point(x + 1, y);
-    if (this.dir === "up") newHead = new Point(x, y - 1);
-    if (this.dir === "down") newHead = new Point(x, y + 1);
+    let newHead = this._calculateNewHead(); 
     this.parts.unshift(newHead);
 
     // If we're not growing (didn't recently eat a pellet), remove the tail of
@@ -208,6 +190,24 @@ class Snake {
     // growth so we're closer to not-growing-any-more.
     if (this.growBy === 0) this.parts.pop();
     else this.growBy--;
+  }
+
+  /** Calculate where the new head would be if snake continues
+   * 
+   * @param {*} currentHead 
+   */
+
+  _calculateNewHead(currentHead = this.head()) {
+    const { x, y } = currentHead;
+
+    this.dir = this.nextDir;
+    let newHead;
+    if (this.dir === "left") newHead = new Point(x - 1, y);
+    if (this.dir === "right") newHead = new Point(x + 1, y);
+    if (this.dir === "up") newHead = new Point(x, y - 1);
+    if (this.dir === "down") newHead = new Point(x, y + 1);
+
+    return newHead;
   }
 
   /** If a valid key and direction was used, change direction to that. */
@@ -230,6 +230,21 @@ class Snake {
   changeDir(dir) {
     this.nextDir = dir;
   }
+
+  /** Randomly change direction:
+*
+* @param dir - current direction
+*
+* FIXME: snake avoids walls, but sometimes turns on itself at corners
+*/
+
+  changeRandomDir(dir) {
+    if (dir === "up" || dir === "down") Math.random() > .5 ? this.nextDir = "left" : this.nextDir = "right";
+    if (dir === "left" || dir === "right") Math.random() > .5 ? this.nextDir = "down" : this.nextDir = "up";
+
+  }
+
+  
 
   /** Handle potentially eating a food pellet:
    *
@@ -265,50 +280,22 @@ class SnakePrime extends Snake {
     super(keymap, start, dir, color) // inherit from snake
   }
 
-
-  /** Did the snake crash into a border wall? t/f */
-
-  checkCrashIntoWall() {
-    return (this.head().isOutOfBound());
-  }
-
-  /** Did the snake crash into self? t/f */
-
-  checkCrashIntoSelf() {
-    const { x, y } = this.head();
-
-    // check if the new location for head will run into body
-    // FIXME: DRY
-    let newHead;
-    if (this.nextDir === "left") newHead = new Point(x - 1, y);
-    if (this.nextDir === "right") newHead = new Point(x + 1, y);
-    if (this.nextDir === "up") newHead = new Point(x, y - 1);
-    if (this.nextDir === "down") newHead = new Point(x, y + 1);
-
-    return this.contains(newHead)
-  }
-
-
   /** Move snake one move in its current direction. */
 
   move() {
     const { x, y } = this.head();
 
     // Calculate where the new head will be, and add that point to front of body
-    let newHead;
-    this.dir = this.nextDir;
-    if (this.dir === "left") newHead = new Point(x - 1, y);
-    if (this.dir === "right") newHead = new Point(x + 1, y);
-    if (this.dir === "up") newHead = new Point(x, y - 1);
-    if (this.dir === "down") newHead = new Point(x, y + 1);
+    let newHead = this._calculateNewHead(); 
 
     while (newHead.willCrashIntoWall()) {
-      this.randomChangeDir(this.dir)
-      this.dir = this.nextDir; // snake's current direction
-      if (this.dir === "left") newHead = new Point(x - 1, y);
-      if (this.dir === "right") newHead = new Point(x + 1, y);
-      if (this.dir === "up") newHead = new Point(x, y - 1);
-      if (this.dir === "down") newHead = new Point(x, y + 1);
+      this.changeRandomDir(this.dir)
+      // this.changeRandomDir(this.dir)
+      // this.dir = this.nextDir; // snake's current direction
+      // if (this.dir === "left") newHead = new Point(x - 1, y);
+      // if (this.dir === "right") newHead = new Point(x + 1, y);
+      // if (this.dir === "up") newHead = new Point(x, y - 1);
+      // if (this.dir === "down") newHead = new Point(x, y + 1);
     }
 
     this.parts.unshift(newHead);
@@ -320,108 +307,7 @@ class SnakePrime extends Snake {
     else this.growBy--;
   }
 
-  /** Randomly change direction:
- *
- * @param dir - current direction
- *
- * FIXME: snake avoids walls, but sometimes turns on itself at corners
- */
 
-  randomChangeDir(dir) {
-    if (dir === "up" || dir === "down") Math.random() > .5 ? this.nextDir = "left" : this.nextDir = "right";
-    if (dir === "left" || dir === "right") Math.random() > .5 ? this.nextDir = "down" : this.nextDir = "up";
-
-  }
-}
-
-/** SnakeChaos. SnakePrime with a short attention span
- * Easily distracted, will pick a random direction after every 16 moves
- * 
- * @param color - CSS color of this snake
- * @param keymap - mapping of keys to directions, eg
- *    { w: "up", a: "left", s: "right", z: "down" }
- * @param start - starting Point for snake
- * @param dir - direction snake moves: "up", "left", "right", "down"
- *
- **/
-
-class SnakeChaos extends SnakePrime {
-  constructor(keymap, start, dir, color = "green") {
-    super(keymap, start, dir, color) // inherit from snake
-    this.tickCount = 0;
-  }
-
-  /** Did the snake crash into a border wall? t/f */
-
-  checkCrashIntoWall() {
-    return (this.head().isOutOfBound());
-  }
-
-  /** Did the snake crash into self? t/f */
-
-  checkCrashIntoSelf() {
-    const { x, y } = this.head();
-
-    // check if the new location for head will run into body
-    // FIXME: DRY
-    let newHead;
-    if (this.nextDir === "left") newHead = new Point(x - 1, y);
-    if (this.nextDir === "right") newHead = new Point(x + 1, y);
-    if (this.nextDir === "up") newHead = new Point(x, y - 1);
-    if (this.nextDir === "down") newHead = new Point(x, y + 1);
-
-    return this.contains(newHead)
-  }
-
-
-  /** Move snake one move in its current direction. */
-
-  move() {
-    const { x, y } = this.head();
-
-    // Calculate where the new head will be, and add that point to front of body
-    let newHead;
-
-    this.tickCount % 16 === 0 ? this.randomChangeDir(this.dir) : this.dir = this.nextDir
-
-    this.dir = this.nextDir;
-    if (this.dir === "left") newHead = new Point(x - 1, y);
-    if (this.dir === "right") newHead = new Point(x + 1, y);
-    if (this.dir === "up") newHead = new Point(x, y - 1);
-    if (this.dir === "down") newHead = new Point(x, y + 1);
-
-    while (newHead.willCrashIntoWall()) {
-      this.randomChangeDir(this.dir);
-      this.dir = this.nextDir; // snake's current direction
-      if (this.dir === "left") newHead = new Point(x - 1, y);
-      if (this.dir === "right") newHead = new Point(x + 1, y);
-      if (this.dir === "up") newHead = new Point(x, y - 1);
-      if (this.dir === "down") newHead = new Point(x, y + 1);
-    }
-
-    this.parts.unshift(newHead);
-
-    // If we're not growing (didn't recently eat a pellet), remove the tail of
-    // the snake body, so it moves and doesn't grow. If we're growing, decrement
-    // growth so we're closer to not-growing-any-more.
-    if (this.growBy === 0) this.parts.pop();
-    else this.growBy--;
-
-    this.tickCount++;
-  }
-
-  /** Randomly change direction:
- *
- * @param dir - current direction
- *
- * FIXME: snake avoids walls, but sometimes turns on itself at corners
- */
-
-  randomChangeDir(dir) {
-    if (dir === "up" || dir === "down") Math.random() > .5 ? this.nextDir = "left" : this.nextDir = "right";
-    if (dir === "left" || dir === "right") Math.random() > .5 ? this.nextDir = "down" : this.nextDir = "up";
-
-  }
 }
 
 /** SnakeDoublePrime. OK now you've got to be cheating
@@ -442,39 +328,6 @@ class SnakeDoublePrime extends SnakePrime {
     super(keymap, start, dir, color) // inherit from snake
   }
 
-
-  /** Did the snake crash into a border wall? t/f */
-
-  checkCrashIntoWall() {
-    return (this.head().isOutOfBound());
-  }
-
-  /** Did the snake crash into self? t/f */
-
-  checkCrashIntoSelf(head = this.head()) {
-    let newHead = this._calculateNewHead(head);
-
-    return this.contains(newHead)
-  }
-
-  _willCrashIntoSelf(newHead) {
-    newHead = this._calculateNewHead(newHead)
-    return this.checkCrashIntoSelf(newHead)
-  }
-
-
-  _calculateNewHead(currentHead) {
-    const { x, y } = currentHead;
-
-    let newHead;
-    if (this.dir === "left") newHead = new Point(x - 1, y);
-    if (this.dir === "right") newHead = new Point(x + 1, y);
-    if (this.dir === "up") newHead = new Point(x, y - 1);
-    if (this.dir === "down") newHead = new Point(x, y + 1);
-
-    return newHead;
-  }
-
   /** Move snake one move in its current direction. */
 
   move() {
@@ -482,8 +335,8 @@ class SnakeDoublePrime extends SnakePrime {
     this.dir = this.nextDir; // snake's current direction
     let newHead = this._calculateNewHead(this.head());
 
-    while (newHead.willCrashIntoWall() || this._willCrashIntoSelf(newHead)) {
-      this.randomChangeDir(this.dir)
+    while (newHead.willCrashIntoWall() || this.checkCrashIntoSelf(newHead)) {
+      this.changeRandomDir(this.dir)
       this.dir = this.nextDir; // snake's current direction
 
       newHead = this._calculateNewHead(this.head());
@@ -501,6 +354,63 @@ class SnakeDoublePrime extends SnakePrime {
 }
 
 
+/** SnakeChaos. SnakePrime with a short attention span
+ * Easily distracted, will pick a random direction after every 16 moves
+ * 
+ * @param color - CSS color of this snake
+ * @param keymap - mapping of keys to directions, eg
+ *    { w: "up", a: "left", s: "right", z: "down" }
+ * @param start - starting Point for snake
+ * @param dir - direction snake moves: "up", "left", "right", "down"
+ *
+ **/
+
+class SnakeChaos extends SnakePrime {
+  constructor(keymap, start, dir, color = "green") {
+    super(keymap, start, dir, color) // inherit from snake
+    this.tickCount = 0;
+  }
+
+  /** Move snake one move in its current direction. */
+
+  move() {
+    const { x, y } = this.head();
+
+    // Calculate where the new head will be, and add that point to front of body
+    let newHead;
+
+    this.tickCount % 16 === 0 ? this.changeRandomDir(this.dir) : this.dir = this.nextDir
+
+    this.dir = this.nextDir;
+    if (this.dir === "left") newHead = new Point(x - 1, y);
+    if (this.dir === "right") newHead = new Point(x + 1, y);
+    if (this.dir === "up") newHead = new Point(x, y - 1);
+    if (this.dir === "down") newHead = new Point(x, y + 1);
+
+    while (newHead.willCrashIntoWall()) {
+      this.changeRandomDir(this.dir);
+      this.dir = this.nextDir; // snake's current direction
+      if (this.dir === "left") newHead = new Point(x - 1, y);
+      if (this.dir === "right") newHead = new Point(x + 1, y);
+      if (this.dir === "up") newHead = new Point(x, y - 1);
+      if (this.dir === "down") newHead = new Point(x, y + 1);
+    }
+
+    this.parts.unshift(newHead);
+
+    // If we're not growing (didn't recently eat a pellet), remove the tail of
+    // the snake body, so it moves and doesn't grow. If we're growing, decrement
+    // growth so we're closer to not-growing-any-more.
+    if (this.growBy === 0) this.parts.pop();
+    else this.growBy--;
+
+    this.tickCount++;
+  }
+
+}
+
+
+
 /** Overall game.
  *
  * @param snake - Snake instance playing
@@ -512,6 +422,16 @@ class Game {
     this.snake = snake;
 
     // array of Pellet instances on board
+    this.food = [];
+    this.numFood = numFood;
+
+    this.timerId = null;
+    this.tickCount = 0;
+  }
+
+  /** Clear game: reset */
+
+  clear() {
     this.food = [];
     this.numFood = numFood;
 
@@ -584,30 +504,10 @@ class Game {
 }
 
 
-/// Set up snakes, game, and start game
-
-// const snake1 = new SnakePrime(
-//   PLAYER_ONE_KEYMAP,
-//   new Point(20, 20),
-//   "right",
-
-// );
-
-// const snake2 = new Snake(
-//     PLAYER_TWO_KEYMAP,
-//     new Point(10, 10),
-//     "right",
-// );
-
-// const game = new Game(snake1);
-// const game = new Game(snake2);
-// game.start();
-
-
 function gameStart(){
   /// Set up snakes, game, and start game
 
-  console.log($('.dropdown')[0].innerText);
+  // console.log($('.dropdown')[0].innerText);
   const mode = $('.dropdown')[0].innerText;
 
   const snake = () => {
@@ -616,6 +516,7 @@ function gameStart(){
     if (mode.includes('Play')) $('.dropdown-toggle').html("Easy");
     return new SnakeDoublePrime(PLAYER_ONE_KEYMAP, new Point(12, 12))
   }
+  console.log(snake())
 
   const game = new Game(snake());
 
