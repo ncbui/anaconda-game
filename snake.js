@@ -345,15 +345,15 @@ class SnakeDoublePrime extends SnakePrime {
     // Calculate where the new head will be, and  add that point to front of body
     this.dir = this.nextDir; // snake's current direction
     let newHead = this._calculateNewHead(this.head());
-    // let numDirChanges = 0;
+    let numDirChanges = 0;
 
     while (newHead.willCrashIntoWall() || this.checkCrashIntoSelf(newHead)) {
-      // if (numDirChanges > 8) break;
+      if (numDirChanges > 8) break;
       this.changeRandomDir(this.dir)
       this.dir = this.nextDir; // snake's current direction
 
       newHead = this._calculateNewHead(this.head());
-      // numDirChanges++;
+      numDirChanges++;
     }
 
     this.parts.unshift(newHead);
