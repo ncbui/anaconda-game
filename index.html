@@ -14,31 +14,44 @@
     <main>
         <section class="col-12 mx-auto text-center">
             <h1> Snake </h1>
+            
         </section>
-        <section id="info" class="col-12 mx-auto text-center">
-            <section class="dropdown show col-8 mx-auto">
+        <section id="select-mode" class="col-12 mx-auto text-center">
+            <div class="dropdown show col-12 col-md-8 mx-auto">
                 <button id="dropdownMenuLink" 
                 class="btn btn-secondary dropdown-toggle" 
                 role="button" 
                 data-toggle="dropdown" 
                 aria-haspopup="true" 
-                aria-expanded="false">
+                aria-expanded="false"
+                size="sm">
                     <!--button message will be here-->
                 </button>
                 <div class="dropdown-menu" aria-labelledby="dLabel">
-                    <a class="dropdown-item" href="#">Easy</a>
                     <a class="dropdown-item" href="#">Classic</a>
-                    <a class="dropdown-item" href="#">Chaotic</a>
-                    <a class="dropdown-item" href="#">FIXME Play Against AI</a>
+                    <a class="dropdown-item" href="#">Classic Helpful</a>
+                    <a class="dropdown-item" href="#">Classic Chaotic</a>
+                    <a class="dropdown-item" href="#">PvE Snake</a>
+                    <a class="dropdown-item" href="#">PvE Helpful</a>
+                    <a class="dropdown-item" href="#">PvE Chaotic</a>
                 </div>
-                <button id="start">
+                <button id="start" size="sm">
                     <!--buttom message will be here-->
                 </button>
-            </section>
-            <section id="boards" class="col-12 mx-auto text-center"></section>
-            <canvas id="board">
-                <!-- game will be here -->
-            </canvas>
+            </div>
+
+            <div id="boards" class="col-12 mx-auto text-center">
+                <canvas id="board">
+                    <!-- game will be here -->
+                </canvas>
+            </div>
+        </section>
+        <section id="rules" class="col-12 col-md-8 mx-auto text-left fixed-bottom">
+            <ul> Choose your snake:
+                <li><b>Classic snake </b> - <em>Your standard snake friend</em></li>
+                <li><b>Helpful snake </b> - <em>An eager buddy who turns to avoid walls and eating itself</em></li>
+                <li><b>Chaotic snake </b> - <em>Has a short attention span. Will turn in a random direction when they are bored</em></li>
+            </ul>
         </section>
     </main>
 
