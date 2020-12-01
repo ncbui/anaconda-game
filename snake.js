@@ -35,6 +35,7 @@ const ctx = canvas.getContext("2d");
 // On-load, setup button to display start message
 const startBtn = document.getElementById("start")
 startBtn.innerText = "Start ";
+startBtn.addEventListener("click", gameStart)
 
 const modeBtn = document.getElementById("dropdownMenuLink")
 modeBtn.innerText = "Play Mode";
@@ -283,19 +284,15 @@ class SnakePrime extends Snake {
   /** Move snake one move in its current direction. */
 
   move() {
-    const { x, y } = this.head();
-
-    // Calculate where the new head will be, and add that point to front of body
-    let newHead = this._calculateNewHead(); 
+    // Calculate where the new head will be, and  add that point to front of body
+    this.dir = this.nextDir; // snake's current direction
+    let newHead = this._calculateNewHead(this.head());
 
     while (newHead.willCrashIntoWall()) {
       this.changeRandomDir(this.dir)
-      // this.changeRandomDir(this.dir)
-      // this.dir = this.nextDir; // snake's current direction
-      // if (this.dir === "left") newHead = new Point(x - 1, y);
-      // if (this.dir === "right") newHead = new Point(x + 1, y);
-      // if (this.dir === "up") newHead = new Point(x, y - 1);
-      // if (this.dir === "down") newHead = new Point(x, y + 1);
+      this.dir = this.nextDir; // snake's current direction
+
+      newHead = this._calculateNewHead(this.head());
     }
 
     this.parts.unshift(newHead);
@@ -307,13 +304,27 @@ class SnakePrime extends Snake {
     else this.growBy--;
   }
 
+  /** Handle potentially eating a food pellet:
+ *
+ * - if head is currently on pellet: start growing snake, and return pellet.
+ * - otherwise, returns undefined.
+ *
+ * @param food - list of Pellet on board.
+ */
+
+  eats(food) {
+    const head = this.head();
+    const pellet = food.find(f => f.pt.x === head.x && f.pt.y === head.y);
+    // console.log("eats pellet=", pellet);
+    if (pellet) Math.random > .5 ? this.growBy += 3 : this.growBy += 2;
+    return pellet;
+  }
 
 }
 
 /** SnakeDoublePrime. OK now you've got to be cheating
- * When it eats good, it sometimes grows a bit more than usual
+ * When it eats food, it sometimes grows a bit more than usual
  * It avoids hitting a wall or itself by automatically picks a random direction
- * When it runs across its body, it sometimes skips over instead of eating itself
  * 
  * @param color - CSS color of this snake
  * @param keymap - mapping of keys to directions, eg
@@ -334,12 +345,15 @@ class SnakeDoublePrime extends SnakePrime {
     // Calculate where the new head will be, and  add that point to front of body
     this.dir = this.nextDir; // snake's current direction
     let newHead = this._calculateNewHead(this.head());
+    // let numDirChanges = 0;
 
     while (newHead.willCrashIntoWall() || this.checkCrashIntoSelf(newHead)) {
+      // if (numDirChanges > 8) break;
       this.changeRandomDir(this.dir)
       this.dir = this.nextDir; // snake's current direction
 
       newHead = this._calculateNewHead(this.head());
+      // numDirChanges++;
     }
 
     this.parts.unshift(newHead);
@@ -349,6 +363,14 @@ class SnakeDoublePrime extends SnakePrime {
     // growth so we're closer to not-growing-any-more.
     if (this.growBy === 0) this.parts.pop();
     else this.growBy--;
+  }
+
+  eats(food) {
+    const head = this.head();
+    const pellet = food.find(f => f.pt.x === head.x && f.pt.y === head.y);
+    // console.log("eats pellet=", pellet);
+    if (pellet) Math.random > .5 ? this.growBy += 4 : this.growBy += 2;
+    return pellet;
   }
 
 }
@@ -376,16 +398,11 @@ class SnakeChaos extends SnakePrime {
   move() {
     const { x, y } = this.head();
 
-    // Calculate where the new head will be, and add that point to front of body
-    let newHead;
-
     this.tickCount % 16 === 0 ? this.changeRandomDir(this.dir) : this.dir = this.nextDir
+    // Calculate where the new head will be, and add that point to front of body
 
     this.dir = this.nextDir;
-    if (this.dir === "left") newHead = new Point(x - 1, y);
-    if (this.dir === "right") newHead = new Point(x + 1, y);
-    if (this.dir === "up") newHead = new Point(x, y - 1);
-    if (this.dir === "down") newHead = new Point(x, y + 1);
+    let newHead = this._calculateNewHead(this.head());
 
     while (newHead.willCrashIntoWall()) {
       this.changeRandomDir(this.dir);
@@ -517,6 +534,8 @@ function gameStart(){
     return new SnakeDoublePrime(PLAYER_ONE_KEYMAP, new Point(12, 12))
   }
   console.log(snake())
+
+  startBtn.removeEventListener("click", gameStart);
 
   const game = new Game(snake());
 
