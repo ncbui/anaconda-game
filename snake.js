@@ -3,7 +3,7 @@
 /** Multiplayer Snake game. */
 
 const WIDTH = 30;
-const HEIGHT = 30;
+const HEIGHT = 24;
 
 // translate game board size to pixels
 const SCALE = 12;
@@ -394,7 +394,55 @@ class SnakeDoublePrime extends SnakePrime {
  *
  **/
 
-class SnakeChaos extends SnakeDoublePrime {
+class SnakeChaos extends Snake {
+  constructor(keymap, start, dir, color = "yellow") {
+    super(keymap, start, dir, color) // inherit from snake
+    this.tickCount = 0;
+  }
+
+  /** Move snake one move in its current direction. */
+
+  move() {
+    const { x, y } = this.head();
+
+    this.tickCount % 16 === 0 ? this.changeRandomDir(this.dir) : this.dir = this.nextDir
+
+    this.dir = this.nextDir;
+    let newHead = this._calculateNewHead(this.head());
+
+    while (newHead.willCrashIntoWall() || this.checkCrashIntoSelf(newHead)) {
+      this.changeRandomDir(this.dir);
+      this.dir = this.nextDir; // snake's current direction
+      if (this.dir === "left") newHead = new Point(x - 1, y);
+      if (this.dir === "right") newHead = new Point(x + 1, y);
+      if (this.dir === "up") newHead = new Point(x, y - 1);
+      if (this.dir === "down") newHead = new Point(x, y + 1);
+    }
+
+    this.parts.unshift(newHead);
+
+    // If we're not growing (didn't recently eat a pellet), remove the tail of
+    // the snake body, so it moves and doesn't grow. If we're growing, decrement
+    // growth so we're closer to not-growing-any-more.
+    if (this.growBy === 0) this.parts.pop();
+    else this.growBy--;
+
+    this.tickCount++;
+  }
+
+}
+/** SnakeNPC. SnakePrime with a short attention span
+ * Easily distracted, will pick a random direction after every 16 moves
+ * 
+ * @param color - CSS color of this snake
+ * @param keymap - mapping of keys to directions, eg
+ *    { w: "up", a: "left", s: "right", z: "down" }
+ * @param start - starting Point for snake
+ * @param dir - direction snake moves: "up", "left", "right", "down"
+ *
+ **/
+
+class SnakeNPC extends SnakeDoublePrime {
   constructor(keymap, start, dir, color = "yellow") {
     super(keymap, start, dir, color) // inherit from snake
     this.tickCount = 0;
@@ -502,7 +550,7 @@ class Game {
       window.clearInterval(this.timerId);
       window.removeEventListener("keydown", this.keyListener);
       ctx.fillText("GAME OVER", (WIDTH * SCALE ) / 2 , ( HEIGHT * SCALE )/ 2 )
-      startBtn.innerText = "Oh no! Restart";
+      startBtn.innerText = "Restart";
       startBtn.addEventListener("click", () => document.location.href = ""); // FIXME: clear board without refresh
       return;
     }
@@ -528,21 +576,24 @@ class Game {
 function gameStart(){
   /// Set up snakes, game, and start game
   startBtn.removeEventListener("click", gameStart);
+  startBtn.addEventListener("click", () => document.location.href = ""); // FIXME: clear board without refresh
+  startBtn.innerText = "Restart";
 
   // console.log($('.dropdown')[0].innerText);
   const mode = $('.dropdown')[0].innerText;
 
   const p1Snake = () => {
     if (mode.includes('Chaotic')) return new SnakeChaos(PLAYER_ONE_KEYMAP, new Point(12, 12));
-    if (mode.includes('Classic')) return new Snake(PLAYER_ONE_KEYMAP, new Point(12, 12));
-    if (mode.includes('Play')) $('.dropdown-toggle').html("Easy");
+    if (mode.includes('Classic Snake')) return new Snake(PLAYER_ONE_KEYMAP, new Point(12, 12));
+    if (mode.includes('Helpful')) return new SnakePrime(PLAYER_ONE_KEYMAP, new Point(12, 12));
+    if (mode.includes('Play')) $('.dropdown-toggle').html("Classic Helpful Snake");
     return new SnakePrime(PLAYER_ONE_KEYMAP, new Point(12, 12))
   }
 
   const p2Snake = () => {
-    // if (mode.includes('Chaotic')) return new SnakeChaos(PLAYER_TWO_KEYMAP, new Point(6, 6));
-    if (mode.includes('Classic')) return;
-    return new SnakeChaos(PLAYER_TWO_KEYMAP, new Point(6, 6), "left", "thistle")
+    if (mode.includes('Play')) $('.dropdown-toggle').html("Classic Helpful");
+    if (mode.includes('Classic') || mode.includes('Play')) return;
+    return new SnakeNPC(PLAYER_TWO_KEYMAP, new Point(6, 6), "left", "thistle")
   }
   console.log(p1Snake())
 
