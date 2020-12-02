@@ -44,3 +44,20 @@ ul {
 li {
     padding-left: 40px;
 }
+
+nav {
+    padding: 0 20px;
+    font-size: 20px;
+    color: gray;
+}
+
+nav a {
+    text-decoration: none;
+    color: gray;
+}
+
+
+nav a:hover {
+    text-decoration: none;
+    color: yellow;
+}
