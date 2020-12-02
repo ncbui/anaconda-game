@@ -383,7 +383,7 @@ class SnakeDoublePrime extends SnakePrime {
 }
 
 
-/** SnakeChaos. SnakePrime with a short attention span
+/** SnakeChaos. Snake with a short attention span
  * Easily distracted, will pick a random direction after every 16 moves
  * 
  * @param color - CSS color of this snake
@@ -583,22 +583,23 @@ function gameStart(){
   const mode = $('.dropdown')[0].innerText;
 
   const p1Snake = () => {
-    if (mode.includes('Chaotic')) return new SnakeChaos(PLAYER_ONE_KEYMAP, new Point(12, 12));
     if (mode.includes('Classic Snake')) return new Snake(PLAYER_ONE_KEYMAP, new Point(12, 12));
     if (mode.includes('Helpful')) return new SnakePrime(PLAYER_ONE_KEYMAP, new Point(12, 12));
-    if (mode.includes('Play')) $('.dropdown-toggle').html("Classic Helpful Snake");
+    if (mode.includes('Chaotic')) return new SnakeChaos(PLAYER_ONE_KEYMAP, new Point(12, 12));
+    if (mode.includes('Play')) $('.dropdown-toggle').html("Classic Helpful");
     return new SnakePrime(PLAYER_ONE_KEYMAP, new Point(12, 12))
   }
 
   const p2Snake = () => {
-    if (mode.includes('Play')) $('.dropdown-toggle').html("Classic Helpful");
     if (mode.includes('Classic') || mode.includes('Play')) return;
+    if (mode.includes('Play')) $('.dropdown-toggle').html("Classic Helpful");
     return new SnakeNPC(PLAYER_TWO_KEYMAP, new Point(6, 6), "left", "thistle")
   }
-  console.log(p1Snake())
 
   const snakes = [p1Snake()];
-  if (p2Snake()) snakes.push(p2Snake());
+  { p2Snake() && 
+    snakes.push(p2Snake())
+  }
 
   
   const game = new Game(snakes);
