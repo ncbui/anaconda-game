@@ -439,13 +439,15 @@ class SnakeChaos extends Snake {
  *    { w: "up", a: "left", s: "right", z: "down" }
  * @param start - starting Point for snake
  * @param dir - direction snake moves: "up", "left", "right", "down"
+ * @param other - the other snake
  *
  **/
 
 class SnakeNPC extends SnakeDoublePrime {
-  constructor(keymap, start, dir, color = "yellow") {
+  constructor(keymap, start, dir, color = "yellow", other) {
     super(keymap, start, dir, color) // inherit from snake
     this.tickCount = 0;
+    this.other = other;
   }
 
   /** Move snake one move in its current direction. */
@@ -458,7 +460,10 @@ class SnakeNPC extends SnakeDoublePrime {
     this.dir = this.nextDir;
     let newHead = this._calculateNewHead(this.head());
 
-    while (newHead.willCrashIntoWall() || this.checkCrashIntoSelf(newHead)) {
+    while (newHead.willCrashIntoWall() || 
+          this.checkCrashIntoSelf(newHead) ||
+          this.checkCrashIntoOtherSnake(this.other, newHead)
+    ) {
       this.changeRandomDir(this.dir);
       this.dir = this.nextDir; // snake's current direction
       if (this.dir === "left") newHead = new Point(x - 1, y);
@@ -583,20 +588,22 @@ function gameStart(){
   const mode = $('.dropdown')[0].innerText;
 
   const p1Snake = () => {
+    if (mode.includes('Play')) $('.dropdown-toggle').html("Classic Helpful");
     if (mode.includes('Classic Snake')) return new Snake(PLAYER_ONE_KEYMAP, new Point(12, 12));
     if (mode.includes('Helpful')) return new SnakePrime(PLAYER_ONE_KEYMAP, new Point(12, 12));
     if (mode.includes('Chaotic')) return new SnakeChaos(PLAYER_ONE_KEYMAP, new Point(12, 12));
-    if (mode.includes('Play')) $('.dropdown-toggle').html("Classic Helpful");
     return new SnakePrime(PLAYER_ONE_KEYMAP, new Point(12, 12))
   }
+
+  let snakes = [p1Snake()];
 
   const p2Snake = () => {
     if (mode.includes('Classic') || mode.includes('Play')) return;
     if (mode.includes('Play')) $('.dropdown-toggle').html("Classic Helpful");
-    return new SnakeNPC(PLAYER_TWO_KEYMAP, new Point(6, 6), "left", "thistle")
+    return new SnakeNPC(PLAYER_TWO_KEYMAP, new Point(6, 6), "left", "thistle", snakes[0])
   }
 
-  const snakes = [p1Snake()];
+
   { p2Snake() && 
     snakes.push(p2Snake())
   }
