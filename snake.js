@@ -33,12 +33,14 @@ const ctx = canvas.getContext("2d");
 
 
 // On-load, setup button to display start message
-const startBtn = document.getElementById("start")
+const startBtn = document.getElementById("start");
 startBtn.innerText = "Start ";
-startBtn.addEventListener("click", gameStart)
+startBtn.addEventListener("click", gameStart);
 
-const modeBtn = document.getElementById("dropdownMenuLink")
+const modeBtn = document.getElementById("dropdownMenuLink");
 modeBtn.innerText = "Play Mode";
+
+// const dropDown = document.getElementById("dropdownMenu");
 
 $('.dropdown-menu').on('click', 'a', function () {
   var text = $(this).html();
@@ -103,6 +105,25 @@ class Point {
   willCrashIntoWall() {
     return this.isOutOfBound();
   }
+
+  /** Return distance to another point*/
+
+  distanceFrom(pt) {
+    const a = this.x - pt.x;
+    const b = this.y - pt.y;
+
+    return (Math.sqrt((a**2) + (b**2)).toFixed(2));
+  }
+
+  /** Return object containing a vector to another point */
+
+  vectorTo(pt) {    
+    return {
+      x: ( this.x - pt.x),
+      y: ( this.y - pt.y)
+    }
+  }
+  
 }
 
 
@@ -146,6 +167,7 @@ class Snake {
     this.nextDir = dir;   // direction we'll start moving on next tick
     this.growBy = 0; // how many to grow by (goes up after eating)
     this.color = color;
+    // TODO: add score based on length, to display at end of game
   }
 
   /** Draw the body of the snake in its color. */
@@ -431,8 +453,8 @@ class SnakeChaos extends Snake {
   }
 
 }
-/** SnakeNPC. SnakePrime with a short attention span
- * Easily distracted, will pick a random direction after every 16 moves
+/** SnakeNPC. Snake that knows how to avoid walls and other snakes
+ * Tries to move towards food
  * 
  * @param color - CSS color of this snake
  * @param keymap - mapping of keys to directions, eg
@@ -450,26 +472,39 @@ class SnakeNPC extends SnakeDoublePrime {
     this.other = other;
   }
 
-  /** Move snake one move in its current direction. */
+  /** Move snake one move towards food or safety */
 
-  move() {
+  move(food) {
     const { x, y } = this.head();
+    // if (food) console.log("SnakeNPC food list", food)
 
-    this.tickCount % 16 === 0 ? this.changeRandomDir(this.dir) : this.dir = this.nextDir
+    // this.tickCount % 16 === 0 ? this.changeRandomDir(this.dir) : this.dir = this.nextDir 
 
+    const dirToFood = this.findFood(food);
+
+    if ( dirToFood === "left" && this.nextDir !== "right") {
+      this.nextDir = dirToFood;
+    } else if ( dirToFood === "right" && this.nextDir !== "left") {
+      this.nextDir = dirToFood;
+    } else if (dirToFood === "down" && this.nextDir !== "up") {
+      this.nextDir = dirToFood;
+    } else if (dirToFood === "up" && this.nextDir !== "down") {
+      this.nextDir = dirToFood};
+    
     this.dir = this.nextDir;
     let newHead = this._calculateNewHead(this.head());
 
+    // if this direction causes death, find another
     while (newHead.willCrashIntoWall() || 
           this.checkCrashIntoSelf(newHead) ||
           this.checkCrashIntoOtherSnake(this.other, newHead)
-    ) {
-      this.changeRandomDir(this.dir);
-      this.dir = this.nextDir; // snake's current direction
-      if (this.dir === "left") newHead = new Point(x - 1, y);
-      if (this.dir === "right") newHead = new Point(x + 1, y);
-      if (this.dir === "up") newHead = new Point(x, y - 1);
-      if (this.dir === "down") newHead = new Point(x, y + 1);
+          ) {
+            this.changeRandomDir(this.dir); 
+            this.dir = this.nextDir; 
+            if (this.dir === "left") newHead = new Point(x - 1, y);
+            if (this.dir === "right") newHead = new Point(x + 1, y);
+            if (this.dir === "up") newHead = new Point(x, y - 1);
+            if (this.dir === "down") newHead = new Point(x, y + 1);
     }
 
     this.parts.unshift(newHead);
@@ -481,6 +516,51 @@ class SnakeNPC extends SnakeDoublePrime {
     else this.growBy--;
 
     this.tickCount++;
+  }
+
+  /** Calculate where the new head would be if snake continues
+ * 
+ * @param {*} currentHead 
+ */
+
+  _calculateNewHead(currentHead = this.head()) {
+    const { x, y } = currentHead;
+
+    this.dir = this.nextDir;
+    let newHead;
+    if (this.dir === "left") newHead = new Point(x - 1, y);
+    if (this.dir === "right") newHead = new Point(x + 1, y);
+    if (this.dir === "up") newHead = new Point(x, y - 1);
+    if (this.dir === "down") newHead = new Point(x, y + 1);
+
+    return newHead;
+  }
+
+  /** Calculate the closest food point and returns a list of possible directions  */
+
+  findFood(food, head = this.head()) {
+    // if (food) console.log("findFood", head, food[0].pt);
+
+    let distanceToPellet = {}; // {distance : pellet}
+
+    food.forEach(f => {
+      let distance = head.distanceFrom(f.pt)
+      distanceToPellet[distance] = f.pt;
+    });
+
+    let closestPellet = Math.min(parseFloat(Object.keys(distanceToPellet))).toFixed(2);
+    closestPellet = distanceToPellet[closestPellet.toString()]; // will always return a point
+
+    let vector = head.vectorTo(closestPellet);
+    
+    let newDirs;
+    if (vector.y < vector.x) {
+      vector.y <= 0 ? newDirs = "down" : newDirs = "up";
+      } else {
+      vector.x <= 0 ? newDirs = "right" : newDirs = "left"
+      };
+
+    return newDirs;
   }
 
 }
@@ -565,15 +645,17 @@ class Game {
       f.draw();
     }
 
+    this.refillFood();
+
     for (const snake of this.snakes) {
-      snake.move();
+
+      snake.move(this.food); // FIXME: Only snakeNPC accepts an argument atm
       snake.draw();
       
       const pellet = snake.eats(this.food);
       if (pellet) this.removeFood(pellet);
   }
 
-    this.refillFood();
   }
 }
 
@@ -584,11 +666,10 @@ function gameStart(){
   startBtn.addEventListener("click", () => document.location.href = ""); // FIXME: clear board without refresh
   startBtn.innerText = "Restart";
 
-  // console.log($('.dropdown')[0].innerText);
   const mode = $('.dropdown')[0].innerText;
 
   const p1Snake = () => {
-    if (mode.includes('Play')) $('.dropdown-toggle').html("Classic Helpful");
+    if (mode.includes('Play')) $('.dropdown-toggle').html("Helpful Snake");
     if (mode.includes('Classic Snake')) return new Snake(PLAYER_ONE_KEYMAP, new Point(12, 12));
     if (mode.includes('Helpful')) return new SnakePrime(PLAYER_ONE_KEYMAP, new Point(12, 12));
     if (mode.includes('Chaotic')) return new SnakeChaos(PLAYER_ONE_KEYMAP, new Point(12, 12));
