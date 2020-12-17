@@ -32,3 +32,13 @@
     picks a random direction to move in every 12 moves
 
 10. Build a game mode toggler
+    single player mode, just a snake toggler
+
+11. Build a snakeNPC
+    avoids walls, itself, and the other player
+    need an algorithm to find closest pellet
+    
+
+In progress:
+    Add score and display it on game end
+
