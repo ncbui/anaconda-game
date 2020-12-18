@@ -37,8 +37,11 @@
 11. Build a snakeNPC
     avoids walls, itself, and the other player
     need an algorithm to find closest pellet
-    
+
 
 In progress:
     Add score and display it on game end
+
+Finding an algorithm for snakeNPC to find the nearest pellet
+- Nearest neighbors algorithm
 
