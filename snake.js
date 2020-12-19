@@ -202,11 +202,21 @@ class Snake {
     return self.some(me => head.x === me.x && head.y === me.y);
   }
 
+
+
   /** Did the snake crash into the other snake? t/f 
    * @param otherSnake - other Snake
    */
   checkCrashIntoOtherSnake(otherSnake, head = this.head()) {
     return otherSnake.parts.some(other => other.x === head.x && other.y === head.y);
+  }
+
+  /** Did snake crash into wall, self, or other snake? */
+
+  checkCrashIntoThings(otherSnake, newHead) {
+    return (newHead.willCrashIntoWall() ||
+      this.checkCrashIntoSelf(newHead) ||
+      this.checkCrashIntoOtherSnake(otherSnake, newHead))
   }
 
   /** Move snake one move in its current direction. */
@@ -495,10 +505,7 @@ class SnakeNPC extends SnakeDoublePrime {
     let newHead = this._calculateNewHead(this.head());
 
     // if this direction causes death, find another
-    while (newHead.willCrashIntoWall() || 
-          this.checkCrashIntoSelf(newHead) ||
-          this.checkCrashIntoOtherSnake(this.other, newHead)
-          ) {
+    while (this.checkCrashIntoThings(this.other, newHead)) {
             this.changeRandomDir(this.dir); 
             this.dir = this.nextDir; 
             if (this.dir === "left") newHead = new Point(x - 1, y);
