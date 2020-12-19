@@ -109,10 +109,10 @@ class Point {
   /** Return distance to another point*/
 
   distanceFrom(pt) {
-    const a = this.x - pt.x;
-    const b = this.y - pt.y;
+    const dx = this.x - pt.x;
+    const dy = this.y - pt.y;
 
-    return (Math.sqrt((a**2) + (b**2)).toFixed(2));
+    return (Math.sqrt((dx**2) + (dy**2)).toFixed(2));
   }
 
   /** Return object containing a vector to another point */
@@ -548,23 +548,26 @@ class SnakeNPC extends SnakeDoublePrime {
   findFood(food, head = this.head()) {
     // if (food) console.log("findFood", head, food[0].pt);
 
-    let distanceToPellet = {}; // {distance : pellet}
+    let nearestPellet;
+    let dToPellet;
+
 
     food.forEach(f => {
-      let distance = head.distanceFrom(f.pt)
-      distanceToPellet[distance] = f.pt;
+      let distance = parseFloat(head.distanceFrom(f.pt))
+      
+      if (!nearestPellet || distance < dToPellet) {
+        dToPellet = distance;
+        nearestPellet = f.pt;
+      }
     });
 
-    let closestPellet = Math.min(parseFloat(Object.keys(distanceToPellet))).toFixed(2);
-    closestPellet = distanceToPellet[closestPellet.toString()]; // will always return a point
-
-    let vector = head.vectorTo(closestPellet);
+    let vector = head.vectorTo(nearestPellet);
     
     let newDirs;
     if (vector.y < vector.x) {
-      vector.y <= 0 ? newDirs = "down" : newDirs = "up";
+      vector.y < 0 ? newDirs = "down" : newDirs = "up";
       } else {
-      vector.x <= 0 ? newDirs = "right" : newDirs = "left"
+      vector.x < 0 ? newDirs = "right" : newDirs = "left"
       };
 
     return newDirs;
