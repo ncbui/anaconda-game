@@ -114,7 +114,7 @@ class Point {
 
     const D = 1; // cost for moving from one space to next;  using simple case
 
-    return D * (dx + dy);
+    return parseFloat(D * (dx + dy));
   }
 
   /** Return object containing a vector to another point */
@@ -553,9 +553,8 @@ class SnakeNPC extends SnakeDoublePrime {
     let nearestPellet;
     let dToPellet;
 
-
     food.forEach(f => {
-      let distance = parseFloat(head.distanceFrom(f.pt))
+      const distance = head.distanceFrom(f.pt);
       
       if (!nearestPellet || distance < dToPellet) {
         dToPellet = distance;
@@ -564,13 +563,27 @@ class SnakeNPC extends SnakeDoublePrime {
     });
 
     let vector = head.vectorTo(nearestPellet);
-    
+    // console.log(vector, this.dir);
     let newDirs;
-    if (vector.y < vector.x) {
+
+        // if snakeNPC is horizontally aligned with the pellet
+      // check to see how it should move vertically
+    // if snakeNPC is vertically aligned w pellet
+      // check to see how it should more horizontally
+    // else, check the for the smallest bit of the vector
+      // prefer to move in a way that reduces that further
+
+    if (vector.x === 0) {
       vector.y < 0 ? newDirs = "down" : newDirs = "up";
-      } else {
+    } else if (vector.y === 0) {
       vector.x < 0 ? newDirs = "right" : newDirs = "left"
-      };
+    } else if (Math.abs(vector.x) < Math.abs(vector.y)) {
+        vector.x < 0 ? newDirs = "right" : newDirs = "left"
+    } else {
+        vector.y < 0 ? newDirs = "down" : newDirs = "up";
+    };
+
+
 
     return newDirs;
   }
