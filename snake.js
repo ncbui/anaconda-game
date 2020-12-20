@@ -213,14 +213,6 @@ class Snake {
     return otherSnake.parts.some(other => other.x === head.x && other.y === head.y);
   }
 
-  /** Did snake crash into wall, self, or other snake? */
-
-  checkCrashIntoThings(otherSnake, newHead) {
-    return (newHead.willCrashIntoWall() ||
-      this.checkCrashIntoSelf(newHead) ||
-      this.checkCrashIntoOtherSnake(otherSnake, newHead))
-  }
-
   /** Move snake one move in its current direction. */
 
   move() {
@@ -482,6 +474,14 @@ class SnakeNPC extends SnakeDoublePrime {
     super(keymap, start, dir, color) // inherit from snake
     this.tickCount = 0;
     this.other = other;
+  }
+
+  /** Did snake crash into wall, self, or other snake? */
+
+  checkCrashIntoThings(otherSnake, newHead) {
+    return (newHead.willCrashIntoWall() ||
+      this.checkCrashIntoSelf(newHead) ||
+      this.checkCrashIntoOtherSnake(otherSnake, newHead))
   }
 
   /** Move snake one move towards food or safety */
