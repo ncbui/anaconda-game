@@ -106,13 +106,15 @@ class Point {
     return this.isOutOfBound();
   }
 
-  /** Return distance to another point*/
+  /** Return Manhattan distance to another point*/
 
   distanceFrom(pt) {
-    const dx = this.x - pt.x;
-    const dy = this.y - pt.y;
+    const dx = Math.abs(this.x - pt.x);
+    const dy = Math.abs(this.y - pt.y);
 
-    return (Math.sqrt((dx**2) + (dy**2)).toFixed(2));
+    const D = 1; // cost for moving from one space to next;  using simple case
+
+    return D * (dx + dy);
   }
 
   /** Return object containing a vector to another point */
