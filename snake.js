@@ -169,7 +169,7 @@ class Snake {
     this.nextDir = dir;   // direction we'll start moving on next tick
     this.growBy = 0; // how many to grow by (goes up after eating)
     this.color = color;
-    // TODO: add score based on length, to display at end of game
+    this.score = this.parts.length;
   }
 
   /** Draw the body of the snake in its color. */
@@ -493,6 +493,7 @@ class SnakeNPC extends SnakeDoublePrime {
     // this.tickCount % 16 === 0 ? this.changeRandomDir(this.dir) : this.dir = this.nextDir 
 
     const dirToFood = this.findFood(food);
+    let numDirChanges = 0;
 
     if ( dirToFood === "left" && this.nextDir !== "right") {
       this.nextDir = dirToFood;
@@ -508,12 +509,14 @@ class SnakeNPC extends SnakeDoublePrime {
 
     // if this direction causes death, find another
     while (this.checkCrashIntoThings(this.other, newHead)) {
-            this.changeRandomDir(this.dir); 
-            this.dir = this.nextDir; 
-            if (this.dir === "left") newHead = new Point(x - 1, y);
-            if (this.dir === "right") newHead = new Point(x + 1, y);
-            if (this.dir === "up") newHead = new Point(x, y - 1);
-            if (this.dir === "down") newHead = new Point(x, y + 1);
+      if (numDirChanges > 8) break;
+      this.changeRandomDir(this.dir); 
+      this.dir = this.nextDir; 
+      if (this.dir === "left") newHead = new Point(x - 1, y);
+      if (this.dir === "right") newHead = new Point(x + 1, y);
+      if (this.dir === "up") newHead = new Point(x, y - 1);
+      if (this.dir === "down") newHead = new Point(x, y + 1);
+      numDirChanges++;
     }
 
     this.parts.unshift(newHead);
@@ -566,7 +569,7 @@ class SnakeNPC extends SnakeDoublePrime {
     // console.log(vector, this.dir);
     let newDirs;
 
-        // if snakeNPC is horizontally aligned with the pellet
+    // if snakeNPC is horizontally aligned with the pellet
       // check to see how it should move vertically
     // if snakeNPC is vertically aligned w pellet
       // check to see how it should more horizontally
@@ -659,7 +662,10 @@ class Game {
     if (isDead) {
       window.clearInterval(this.timerId);
       window.removeEventListener("keydown", this.keyListener);
-      ctx.fillText("GAME OVER", (WIDTH * SCALE ) / 2 , ( HEIGHT * SCALE )/ 2 )
+      ctx.fillText("GAME OVER", ((WIDTH * SCALE) / 2 - (2 * SCALE)), ((HEIGHT * SCALE) / 2 - (2 * SCALE)))
+      ctx.fillText(`Player Score: ${this.snakes[0].score}`, ((WIDTH * SCALE) / 2 - (2.25 * SCALE)), ((HEIGHT * SCALE) / 2 + (1 * SCALE)) )
+      ctx.fillText(`NPC Score: ${this.snakes[1].score}`, ((WIDTH * SCALE) / 2 - (2 * SCALE)), ((HEIGHT * SCALE) / 2 + (2 * SCALE)) )
+      ctx.fillText(`WINNER ${this.snakes[0].score > this.snakes[1].score ? "Player" : "snakeNPC"}`, ((WIDTH * SCALE) / 2 - (3 * SCALE)), (( HEIGHT * SCALE )/ 2 + (4 * SCALE)))
       startBtn.innerText = "Restart";
       startBtn.addEventListener("click", () => document.location.href = ""); // FIXME: clear board without refresh
       return;
@@ -678,7 +684,10 @@ class Game {
       snake.draw();
       
       const pellet = snake.eats(this.food);
-      if (pellet) this.removeFood(pellet);
+      if (pellet) {
+        this.removeFood(pellet);
+        snake.score += snake.growBy;
+      };
   }
 
   }
@@ -695,7 +704,7 @@ function gameStart(){
 
   const p1Snake = () => {
     if (mode.includes('Play')) $('.dropdown-toggle').html("Helpful Snake");
-    if (mode.includes('Classic Snake')) return new Snake(PLAYER_ONE_KEYMAP, new Point(12, 12));
+    if (mode.includes('Arcade')) return new Snake(PLAYER_ONE_KEYMAP, new Point(12, 12));
     if (mode.includes('Helpful')) return new SnakePrime(PLAYER_ONE_KEYMAP, new Point(12, 12));
     if (mode.includes('Chaotic')) return new SnakeChaos(PLAYER_ONE_KEYMAP, new Point(12, 12));
     return new SnakePrime(PLAYER_ONE_KEYMAP, new Point(12, 12))
