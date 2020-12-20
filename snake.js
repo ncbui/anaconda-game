@@ -8,7 +8,7 @@ const HEIGHT = 24;
 // translate game board size to pixels
 const SCALE = 12;
 
-const GAME_DELAY_MS = 200;
+const GAME_DELAY_MS = 175;
 
 const PLAYER_ONE_KEYMAP = {
   ArrowLeft: "left", ArrowRight: "right", ArrowUp: "up", ArrowDown: "down",
@@ -662,10 +662,13 @@ class Game {
     if (isDead) {
       window.clearInterval(this.timerId);
       window.removeEventListener("keydown", this.keyListener);
-      ctx.fillText("GAME OVER", ((WIDTH * SCALE) / 2 - (2 * SCALE)), ((HEIGHT * SCALE) / 2 - (2 * SCALE)))
-      ctx.fillText(`Player Score: ${this.snakes[0].score}`, ((WIDTH * SCALE) / 2 - (2.25 * SCALE)), ((HEIGHT * SCALE) / 2 + (1 * SCALE)) )
-      ctx.fillText(`NPC Score: ${this.snakes[1].score}`, ((WIDTH * SCALE) / 2 - (2 * SCALE)), ((HEIGHT * SCALE) / 2 + (2 * SCALE)) )
-      ctx.fillText(`WINNER ${this.snakes[0].score > this.snakes[1].score ? "Player" : "snakeNPC"}`, ((WIDTH * SCALE) / 2 - (3 * SCALE)), (( HEIGHT * SCALE )/ 2 + (4 * SCALE)))
+      ctx.font = "18px Arial";
+      ctx.textAlign = "center";
+      ctx.fillStyle = "white";
+      ctx.fillText("GAME OVER", ( (WIDTH * SCALE) / 2 ), ( (HEIGHT * SCALE) / 2 - (4 * SCALE)))
+      ctx.fillText(`Player Score: ${this.snakes[0].score}`, ( (WIDTH * SCALE) / 2 ), ((HEIGHT * SCALE) / 2 + (.5 * SCALE)) )
+      ctx.fillText(`NPC Score: ${this.snakes[1].score}`, ( (WIDTH * SCALE) / 2 ), ((HEIGHT * SCALE) / 2 + (2 * SCALE)) )
+      ctx.fillText(`${this.snakes[0].score > this.snakes[1].score ? "PLAYER" : "SnakeNPC"} WINS`, ( (WIDTH * SCALE) / 2 ), (( HEIGHT * SCALE )/ 2 + (5 * SCALE)))
       startBtn.innerText = "Restart";
       startBtn.addEventListener("click", () => document.location.href = ""); // FIXME: clear board without refresh
       return;
@@ -724,7 +727,7 @@ function gameStart(){
   }
 
   
-  const game = new Game(snakes);
+  const game = new Game(snakes, 4);
 
   game.start();
 }
