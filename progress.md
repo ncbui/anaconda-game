@@ -39,8 +39,19 @@
     need an algorithm to find closest pellet
 
 
-In progress:
-    Add score and display it on game end
+12. Add score and display it on game end
+
+TODO: DRYing up classes and functions
+    - One class for player snake, adding a type argument to determine type of snake
+    - One class for snakeNPC
+    - 
+
+TODO: for player experience
+    - directions for play
+    - limit game to always being player vs snake
+    - style directions and explanations
+
+
 
 Finding an algorithm for snakeNPC to find the nearest pellet
 - Nearest neighbors algorithm
