@@ -162,8 +162,9 @@ class Pellet {
  **/
 
 class Snake {
-  constructor(keymap, start, dir = "right", color = "orange") {
+  constructor(keymap, type, start, dir = "right", color = "orange") {
     this.keymap = keymap;
+    this.type = type;
     this.parts = [start]; // list of Points in snake body
     this.dir = dir;       // direction currently moving
     this.nextDir = dir;   // direction we'll start moving on next tick
@@ -457,6 +458,8 @@ class SnakeChaos extends Snake {
   }
 
 }
+
+
 /** SnakeNPC. Snake that knows how to avoid walls and other snakes
  * Tries to move towards food
  * 
@@ -469,9 +472,9 @@ class SnakeChaos extends Snake {
  *
  **/
 
-class SnakeNPC extends SnakeDoublePrime {
-  constructor(keymap, start, dir, color = "yellow", other) {
-    super(keymap, start, dir, color) // inherit from snake
+class SnakeNPC extends Snake {
+  constructor(keymap, type, start, dir, color, other) {
+    super(keymap, type, start, dir, color) // inherit from snake
     this.tickCount = 0;
     this.other = other;
   }
@@ -706,26 +709,21 @@ function gameStart(){
   const mode = $('.dropdown')[0].innerText;
 
   const p1Snake = () => {
-    if (mode.includes('Play')) $('.dropdown-toggle').html("Helpful Snake");
-    if (mode.includes('Arcade')) return new Snake(PLAYER_ONE_KEYMAP, new Point(12, 12));
-    if (mode.includes('Helpful')) return new SnakePrime(PLAYER_ONE_KEYMAP, new Point(12, 12));
-    if (mode.includes('Chaotic')) return new SnakeChaos(PLAYER_ONE_KEYMAP, new Point(12, 12));
-    return new SnakePrime(PLAYER_ONE_KEYMAP, new Point(12, 12))
+    if (mode.includes('Play')) $('.dropdown-toggle').html("Classic");
+    if (mode.includes('Classic')) return new Snake(PLAYER_ONE_KEYMAP, "classic", new Point(12, 12));
+    if (mode.includes('Helpful')) return new Snake(PLAYER_ONE_KEYMAP, "helpful", new Point(12, 12));
+    if (mode.includes('Chaotic')) return new Snake(PLAYER_ONE_KEYMAP, "chaotic", new Point(12, 12));
   }
 
   let snakes = [p1Snake()];
-
+  
   const p2Snake = () => {
-    if (mode.includes('Classic') || mode.includes('Play')) return;
-    if (mode.includes('Play')) $('.dropdown-toggle').html("Classic Helpful");
-    return new SnakeNPC(PLAYER_TWO_KEYMAP, new Point(6, 6), "left", "thistle", snakes[0])
+    return new SnakeNPC(PLAYER_TWO_KEYMAP, "npc", new Point(6, 6), "left", "thistle", snakes[0]);
   }
 
+  snakes.push(p2Snake())
 
-  { p2Snake() && 
-    snakes.push(p2Snake())
-  }
-
+  console.log({snakes})
   
   const game = new Game(snakes, 4);
 
