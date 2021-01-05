@@ -41,10 +41,9 @@
 
 12. Add score and display it on game end
 
-TODO: DRYing up classes and functions
-    - One class for player snake, adding a type argument to determine type of snake
-    - One class for snakeNPC
-    - 
+13. DRYing up classes and functions
+    Single class for player snake now accepts type argument to determine movement pattern
+
 
 TODO: for player experience
     - directions for play

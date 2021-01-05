@@ -119,13 +119,13 @@ class Point {
 
   /** Return object containing a vector to another point */
 
-  vectorTo(pt) {    
+  vectorTo(pt) {
     return {
-      x: ( this.x - pt.x),
-      y: ( this.y - pt.y)
+      x: (this.x - pt.x),
+      y: (this.y - pt.y)
     }
   }
-  
+
 }
 
 
@@ -171,6 +171,7 @@ class Snake {
     this.growBy = 0; // how many to grow by (goes up after eating)
     this.color = color;
     this.score = this.parts.length;
+    this.tickCount = 0; // used by chaotic snake
   }
 
   /** Draw the body of the snake in its color. */
@@ -217,7 +218,46 @@ class Snake {
   /** Move snake one move in its current direction. */
 
   move() {
-    let newHead = this._calculateNewHead(); 
+
+    let newHead;
+
+    if (this.type === "chaotic") {
+
+      this.tickCount % 16 === 0 ? this.changeRandomDir(this.dir) : this.dir = this.nextDir
+
+      this.dir = this.nextDir;
+      newHead = this._calculateNewHead(this.head());
+
+      // Keeping to test out this mode
+      // while (newHead.willCrashIntoWall() ) {
+      //   this.changeRandomDir(this.dir);
+      //   this.dir = this.nextDir; // snake's current direction
+
+      //   newHead = this._calculateNewHead(this.head())
+      // }
+
+      this.tickCount++;
+
+    } else if (this.type === "helpful") {
+      let numDirChanges = 0;
+
+      this.dir = this.nextDir;
+      newHead = this._calculateNewHead(this.head());
+
+      while (newHead.willCrashIntoWall()) {
+        if (numDirChanges > 8) break;
+
+        this.changeRandomDir(this.dir)
+        this.dir = this.nextDir;
+
+        newHead = this._calculateNewHead(this.head());
+        numDirChanges++;
+      }
+
+    } else {
+      newHead = this._calculateNewHead();
+    }
+
     this.parts.unshift(newHead);
 
     // If we're not growing (didn't recently eat a pellet), remove the tail of
@@ -279,8 +319,6 @@ class Snake {
 
   }
 
-  
-
   /** Handle potentially eating a food pellet:
    *
    * - if head is currently on pellet: start growing snake, and return pellet.
@@ -293,170 +331,9 @@ class Snake {
     const head = this.head();
     const pellet = food.find(f => f.pt.x === head.x && f.pt.y === head.y);
     // console.log("eats pellet=", pellet);
-    if (pellet) this.growBy += 2;
+    if (pellet) this.growBy += 1;
     return pellet;
   }
-}
-
-/** SnakePrime. Anything Snake can do, Prime can do better
- * When it eats good, it sometimes grows by twice as much
- * It avoids hitting a wall by automatically picking a random direction
- * 
- * @param color - CSS color of this snake
- * @param keymap - mapping of keys to directions, eg
- *    { w: "up", a: "left", s: "right", z: "down" }
- * @param start - starting Point for snake
- * @param dir - direction snake moves: "up", "left", "right", "down"
- *
- **/
-
-class SnakePrime extends Snake {
-  constructor(keymap, start, dir, color = "red") {
-    super(keymap, start, dir, color) // inherit from snake
-  }
-
-  /** Move snake one move in its current direction. */
-
-  move() {
-    // Calculate where the new head will be, and  add that point to front of body
-    this.dir = this.nextDir; // snake's current direction
-    let newHead = this._calculateNewHead(this.head());
-
-    while (newHead.willCrashIntoWall()) {
-      this.changeRandomDir(this.dir)
-      this.dir = this.nextDir; // snake's current direction
-
-      newHead = this._calculateNewHead(this.head());
-    }
-
-    this.parts.unshift(newHead);
-
-    // If we're not growing (didn't recently eat a pellet), remove the tail of
-    // the snake body, so it moves and doesn't grow. If we're growing, decrement
-    // growth so we're closer to not-growing-any-more.
-    if (this.growBy === 0) this.parts.pop();
-    else this.growBy--;
-  }
-
-  /** Handle potentially eating a food pellet:
- *
- * - if head is currently on pellet: start growing snake, and return pellet.
- * - otherwise, returns undefined.
- *
- * @param food - list of Pellet on board.
- */
-
-  eats(food) {
-    const head = this.head();
-    const pellet = food.find(f => f.pt.x === head.x && f.pt.y === head.y);
-    // console.log("eats pellet=", pellet);
-    if (pellet) Math.random > .5 ? this.growBy += 3 : this.growBy += 2;
-    return pellet;
-  }
-
-}
-
-/** SnakeDoublePrime. OK now you've got to be cheating
- * When it eats food, it sometimes grows a bit more than usual
- * It avoids hitting a wall or itself by automatically picks a random direction
- * 
- * @param color - CSS color of this snake
- * @param keymap - mapping of keys to directions, eg
- *    { w: "up", a: "left", s: "right", z: "down" }
- * @param start - starting Point for snake
- * @param dir - direction snake moves: "up", "left", "right", "down"
- *
- **/
-
-class SnakeDoublePrime extends SnakePrime {
-  constructor(keymap, start, dir, color = "red") {
-    super(keymap, start, dir, color) // inherit from snake
-  }
-
-  /** Move snake one move in its current direction. */
-
-  move() {
-    // Calculate where the new head will be, and  add that point to front of body
-    this.dir = this.nextDir; // snake's current direction
-    let newHead = this._calculateNewHead(this.head());
-    let numDirChanges = 0;
-
-    while (newHead.willCrashIntoWall() || this.checkCrashIntoSelf(newHead)) {
-      if (numDirChanges > 8) break;
-      this.changeRandomDir(this.dir)
-      this.dir = this.nextDir; // snake's current direction
-
-      newHead = this._calculateNewHead(this.head());
-      numDirChanges++;
-    }
-
-    this.parts.unshift(newHead);
-
-    // If we're not growing (didn't recently eat a pellet), remove the tail of
-    // the snake body, so it moves and doesn't grow. If we're growing, decrement
-    // growth so we're closer to not-growing-any-more.
-    if (this.growBy === 0) this.parts.pop();
-    else this.growBy--;
-  }
-
-  eats(food) {
-    const head = this.head();
-    const pellet = food.find(f => f.pt.x === head.x && f.pt.y === head.y);
-    // console.log("eats pellet=", pellet);
-    if (pellet) Math.random > .5 ? this.growBy += 4 : this.growBy += 2;
-    return pellet;
-  }
-
-}
-
-
-/** SnakeChaos. Snake with a short attention span
- * Easily distracted, will pick a random direction after every 16 moves
- * 
- * @param color - CSS color of this snake
- * @param keymap - mapping of keys to directions, eg
- *    { w: "up", a: "left", s: "right", z: "down" }
- * @param start - starting Point for snake
- * @param dir - direction snake moves: "up", "left", "right", "down"
- *
- **/
-
-class SnakeChaos extends Snake {
-  constructor(keymap, start, dir, color = "yellow") {
-    super(keymap, start, dir, color) // inherit from snake
-    this.tickCount = 0;
-  }
-
-  /** Move snake one move in its current direction. */
-
-  move() {
-    const { x, y } = this.head();
-
-    this.tickCount % 16 === 0 ? this.changeRandomDir(this.dir) : this.dir = this.nextDir
-
-    this.dir = this.nextDir;
-    let newHead = this._calculateNewHead(this.head());
-
-    while (newHead.willCrashIntoWall() || this.checkCrashIntoSelf(newHead)) {
-      this.changeRandomDir(this.dir);
-      this.dir = this.nextDir; // snake's current direction
-      if (this.dir === "left") newHead = new Point(x - 1, y);
-      if (this.dir === "right") newHead = new Point(x + 1, y);
-      if (this.dir === "up") newHead = new Point(x, y - 1);
-      if (this.dir === "down") newHead = new Point(x, y + 1);
-    }
-
-    this.parts.unshift(newHead);
-
-    // If we're not growing (didn't recently eat a pellet), remove the tail of
-    // the snake body, so it moves and doesn't grow. If we're growing, decrement
-    // growth so we're closer to not-growing-any-more.
-    if (this.growBy === 0) this.parts.pop();
-    else this.growBy--;
-
-    this.tickCount++;
-  }
-
 }
 
 
@@ -490,35 +367,31 @@ class SnakeNPC extends Snake {
   /** Move snake one move towards food or safety */
 
   move(food) {
-    const { x, y } = this.head();
-    // if (food) console.log("SnakeNPC food list", food)
-
-    // this.tickCount % 16 === 0 ? this.changeRandomDir(this.dir) : this.dir = this.nextDir 
 
     const dirToFood = this.findFood(food);
     let numDirChanges = 0;
 
-    if ( dirToFood === "left" && this.nextDir !== "right") {
+    if (dirToFood === "left" && this.nextDir !== "right") {
       this.nextDir = dirToFood;
-    } else if ( dirToFood === "right" && this.nextDir !== "left") {
+    } else if (dirToFood === "right" && this.nextDir !== "left") {
       this.nextDir = dirToFood;
     } else if (dirToFood === "down" && this.nextDir !== "up") {
       this.nextDir = dirToFood;
     } else if (dirToFood === "up" && this.nextDir !== "down") {
-      this.nextDir = dirToFood};
-    
+      this.nextDir = dirToFood
+    };
+
     this.dir = this.nextDir;
     let newHead = this._calculateNewHead(this.head());
 
     // if this direction causes death, find another
     while (this.checkCrashIntoThings(this.other, newHead)) {
       if (numDirChanges > 8) break;
-      this.changeRandomDir(this.dir); 
-      this.dir = this.nextDir; 
-      if (this.dir === "left") newHead = new Point(x - 1, y);
-      if (this.dir === "right") newHead = new Point(x + 1, y);
-      if (this.dir === "up") newHead = new Point(x, y - 1);
-      if (this.dir === "down") newHead = new Point(x, y + 1);
+      this.changeRandomDir(this.dir);
+      this.dir = this.nextDir;
+
+      newHead = this._calculateNewHead(this.head());
+
       numDirChanges++;
     }
 
@@ -533,24 +406,6 @@ class SnakeNPC extends Snake {
     this.tickCount++;
   }
 
-  /** Calculate where the new head would be if snake continues
- * 
- * @param {*} currentHead 
- */
-
-  _calculateNewHead(currentHead = this.head()) {
-    const { x, y } = currentHead;
-
-    this.dir = this.nextDir;
-    let newHead;
-    if (this.dir === "left") newHead = new Point(x - 1, y);
-    if (this.dir === "right") newHead = new Point(x + 1, y);
-    if (this.dir === "up") newHead = new Point(x, y - 1);
-    if (this.dir === "down") newHead = new Point(x, y + 1);
-
-    return newHead;
-  }
-
   /** Calculate the closest food point and returns a list of possible directions  */
 
   findFood(food, head = this.head()) {
@@ -561,7 +416,7 @@ class SnakeNPC extends Snake {
 
     food.forEach(f => {
       const distance = head.distanceFrom(f.pt);
-      
+
       if (!nearestPellet || distance < dToPellet) {
         dToPellet = distance;
         nearestPellet = f.pt;
@@ -573,20 +428,20 @@ class SnakeNPC extends Snake {
     let newDirs;
 
     // if snakeNPC is horizontally aligned with the pellet
-      // check to see how it should move vertically
+    // check to see how it should move vertically
     // if snakeNPC is vertically aligned w pellet
-      // check to see how it should more horizontally
+    // check to see how it should more horizontally
     // else, check the for the smallest bit of the vector
-      // prefer to move in a way that reduces that further
+    // prefer to move in a way that reduces that further
 
     if (vector.x === 0) {
       vector.y < 0 ? newDirs = "down" : newDirs = "up";
     } else if (vector.y === 0) {
       vector.x < 0 ? newDirs = "right" : newDirs = "left"
     } else if (Math.abs(vector.x) < Math.abs(vector.y)) {
-        vector.x < 0 ? newDirs = "right" : newDirs = "left"
+      vector.x < 0 ? newDirs = "right" : newDirs = "left"
     } else {
-        vector.y < 0 ? newDirs = "down" : newDirs = "up";
+      vector.y < 0 ? newDirs = "down" : newDirs = "up";
     };
 
 
@@ -656,10 +511,11 @@ class Game {
     const isDead = this.snakes.some(snake => {
       return (
         snake.checkCrashIntoWall() ||
-        snake.checkCrashIntoSelf()  ||
+        snake.checkCrashIntoSelf() ||
         // find other snake, check if snake has crashed into other snake
         this.snakes.filter(other => other !== snake).some(other => snake.checkCrashIntoOtherSnake(other))
-      )}
+      )
+    }
     )
 
     if (isDead) {
@@ -668,10 +524,10 @@ class Game {
       ctx.font = "18px Arial";
       ctx.textAlign = "center";
       ctx.fillStyle = "white";
-      ctx.fillText("GAME OVER", ( (WIDTH * SCALE) / 2 ), ( (HEIGHT * SCALE) / 2 - (4 * SCALE)))
-      ctx.fillText(`Player Score: ${this.snakes[0].score}`, ( (WIDTH * SCALE) / 2 ), ((HEIGHT * SCALE) / 2 + (.5 * SCALE)) )
-      ctx.fillText(`NPC Score: ${this.snakes[1].score}`, ( (WIDTH * SCALE) / 2 ), ((HEIGHT * SCALE) / 2 + (2 * SCALE)) )
-      ctx.fillText(`${this.snakes[0].score > this.snakes[1].score ? "PLAYER" : "SnakeNPC"} WINS`, ( (WIDTH * SCALE) / 2 ), (( HEIGHT * SCALE )/ 2 + (5 * SCALE)))
+      ctx.fillText("GAME OVER", ((WIDTH * SCALE) / 2), ((HEIGHT * SCALE) / 2 - (4 * SCALE)))
+      ctx.fillText(`Player Score: ${this.snakes[0].score}`, ((WIDTH * SCALE) / 2), ((HEIGHT * SCALE) / 2 + (.5 * SCALE)))
+      ctx.fillText(`NPC Score: ${this.snakes[1].score}`, ((WIDTH * SCALE) / 2), ((HEIGHT * SCALE) / 2 + (2 * SCALE)))
+      ctx.fillText(`${this.snakes[0].score > this.snakes[1].score ? "PLAYER" : "SnakeNPC"} WINS`, ((WIDTH * SCALE) / 2), ((HEIGHT * SCALE) / 2 + (5 * SCALE)))
       startBtn.innerText = "Restart";
       startBtn.addEventListener("click", () => document.location.href = ""); // FIXME: clear board without refresh
       return;
@@ -688,19 +544,19 @@ class Game {
 
       snake.move(this.food); // FIXME: Only snakeNPC accepts an argument atm
       snake.draw();
-      
+
       const pellet = snake.eats(this.food);
       if (pellet) {
         this.removeFood(pellet);
         snake.score += snake.growBy;
       };
-  }
+    }
 
   }
 }
 
 
-function gameStart(){
+function gameStart() {
   /// Set up snakes, game, and start game
   startBtn.removeEventListener("click", gameStart);
   startBtn.addEventListener("click", () => document.location.href = ""); // FIXME: clear board without refresh
@@ -716,15 +572,15 @@ function gameStart(){
   }
 
   let snakes = [p1Snake()];
-  
+
   const p2Snake = () => {
     return new SnakeNPC(PLAYER_TWO_KEYMAP, "npc", new Point(6, 6), "left", "thistle", snakes[0]);
   }
 
   snakes.push(p2Snake())
 
-  console.log({snakes})
-  
+  console.log({ snakes })
+
   const game = new Game(snakes, 4);
 
   game.start();
