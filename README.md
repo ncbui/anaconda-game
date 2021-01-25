@@ -1,23 +1,38 @@
-# Snake Game
+# Anaconda Game
 
-A arcade snake game built with object-oriented principles and the HTML Canvas library.
+Snake x Blockade
+Browser-based game built with the Canvas API and javascipt.
 
+## How to Play
 
-Choose between two play modes: Classic (1P) and PvE (Player vs NPC)
+1. Use the arrow keys to move your snake around the board.
+2. Eat food to grow larger.
+3. Outgrow the other snake.
+4. The game ends when one of the snake runs into a wall or eats itself or the other.
 
-Choose between three snakes: Classic, Helpful, Chaotic
+Play as one of three snakes: Classic, Helpful, Chaotic
 
 ## Demo
 
 Play the [demo](https://ncbui.github.io/JS-OO-Snake/)
 
-## More on the NPC
+## Pathfinding NPC
 
-The snake NPC changes directions to avoid crashing into things or to reach food.
+The Snake NPC uses the A* search algorithm and obstacle detection to find the shortest path to nearby food.
 
-When there is possibility of it crashing into things, a random direction will be generated for its next move.
+Food Detection:
+- on each move, calculates Manhattan taxicab distance for all of the food pellets to find the nearest pellet
+- FIXME: comparing horizontal or vertical distance to the nearest pellet pick direction for next move
 
-Food detection currently involves:
-- calculating Euclidean distance for all of the pellets during each 'move' and choosing the nearest pellet
-- calculating a vector to the nearest pellet
-- picking a direction based on whether the horizontal or vertical length is shortest
+Path calculation:
+redblobgames.com/pathfinding/a-star/introduction.html
+
+
+When there is possibility of it crashing into things, FIXME: random direction will be generated for its next move.
+
+Path recalculation:
+- Follows a local repair strategy when the path needs to be recalculated. 
+- Finds a good path nearby by recalculating the first FIXME: X steps on the path and slices it into stored path.
+
+
+When the NPC (FIXME: criteria for recalculation), the A* search algorithm is used to calculate a path to the the nearest food pellet. 

@@ -41,8 +41,11 @@
 
 12. Add score and display it on game end
 
+
 13. DRYing up classes and functions
     Single class for player snake now accepts type argument to determine movement pattern
+
+
 
 
 TODO: for player experience

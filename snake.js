@@ -128,15 +128,17 @@ class Point {
 
   /** Return an array of neighbors */
 
-  neighbors(pt) {
+  neighbors() {
+    let x = this.pt.x;
+    let y = this.pt.y;
 
     let neighbors = [
-      new Point(pt.x - 1, pt.y),
-      new Point(pt.x + 1, pt.y),
-      new Point(pt.x, pt.y - 1),
-      new Point(pt.x, pt.y + 1),
+      new Point(x - 1, y),
+      new Point(x + 1, y),
+      new Point(x, y - 1),
+      new Point(x, y + 1),
     ]
-    
+
     return neighbors;
   }
 
@@ -176,7 +178,7 @@ class Pellet {
  **/
 
 class Snake {
-  constructor(keymap, type, start, dir = "right", color = "orange") {
+  constructor(keymap, type, start, color = "orange", dir = "right",) {
     this.keymap = keymap;
     this.type = type;
     this.parts = [start]; // list of Points in snake body
@@ -364,10 +366,11 @@ class Snake {
  **/
 
 class SnakeNPC extends Snake {
-  constructor(keymap, type, start, dir, color, other) {
+  constructor(keymap, type, start, color, dir, other) {
     super(keymap, type, start, dir, color) // inherit from snake
     this.tickCount = 0;
     this.other = other;
+    this.color = '#FFF59B';
   }
 
   /** Did snake crash into wall, self, or other snake? */
@@ -378,20 +381,28 @@ class SnakeNPC extends Snake {
       this.checkCrashIntoOtherSnake(otherSnake, newHead))
   }
 
-  /** Find a path to a pellet */
-  findPath(head, pellet) {
-    let frontier = []
-    frontier.push(head);
+  // /** Find a path to a pellet */
+  // findPath(head, pellet) {
+  //   let frontier = []
+  //   frontier.push(head);
 
-    let reached = new Set();
-    reached.add(head);
+  //   let reached = new Set();
+  //   reached.add(head);
 
-    let current;
+  //   let current;
 
-    while (frontier) {
-      current = frontier.shift();
-    }
-  }
+  //   while (frontier) {
+  //     current = frontier.shift();
+
+  //     console.log(current);
+
+  //     for (let next in current.neighbors())
+  //       if (!reached.get(current)) {
+  //         frontier.push(next);
+  //         reached.add(next);
+  //       }  
+  //   }
+  // }
 
   /** Move snake one move towards food or safety */
 
@@ -438,7 +449,6 @@ class SnakeNPC extends Snake {
   /** Calculate the closest food point and returns a list of possible directions  */
 
   findFood(food, head = this.head()) {
-    // if (food) console.log("findFood", head, food[0].pt);
 
     let nearestPellet;
     let dToPellet;
@@ -453,7 +463,7 @@ class SnakeNPC extends Snake {
     });
 
     let vector = head.vectorTo(nearestPellet);
-    // console.log(vector, this.dir);
+
     let newDirs;
 
     // if snakeNPC is horizontally aligned with the pellet
@@ -503,6 +513,11 @@ class Game {
   start() {
     document.addEventListener("keydown", (evt) => this.keyListener(evt));
     this.timerId = window.setInterval(this.tick.bind(this), GAME_DELAY_MS);
+  }
+
+  clear() {
+    window.clearInterval(this.timerId);
+    this.food.forEach(p => p.draw('black'))
   }
 
   /** Refill board with food (don't allow food to be on same spot as snake). */
@@ -586,31 +601,31 @@ class Game {
 
 
 function gameStart() {
+  let snakes = []; 
+  let game = new Game(snakes, 0);
+
   /// Set up snakes, game, and start game
   startBtn.removeEventListener("click", gameStart);
-  startBtn.addEventListener("click", () => document.location.href = ""); // FIXME: clear board without refresh
+  startBtn.addEventListener("click", () => window.location.href = ""); // FIXME: clear board without refresh
   startBtn.innerText = "Restart";
 
   const mode = $('.dropdown')[0].innerText;
 
   const p1Snake = () => {
-    if (mode.includes('Play')) $('.dropdown-toggle').html("Classic");
-    if (mode.includes('Classic')) return new Snake(PLAYER_ONE_KEYMAP, "classic", new Point(12, 12));
-    if (mode.includes('Helpful')) return new Snake(PLAYER_ONE_KEYMAP, "helpful", new Point(12, 12));
-    if (mode.includes('Chaotic')) return new Snake(PLAYER_ONE_KEYMAP, "chaotic", new Point(12, 12));
-  }
+    if (mode.includes('Helpful')) {
+      return new Snake(PLAYER_ONE_KEYMAP, "helpful", new Point(12, 12), "purple");
+    } else if (mode.includes('Chaotic')) {
+      return new Snake(PLAYER_ONE_KEYMAP, "chaotic", new Point(12, 12), "red");
+    } else {
+      return new Snake(PLAYER_ONE_KEYMAP, "classic", new Point(12, 12));
+  }}
+  
+  snakes.push(p1Snake())
+  const p2Snake = new SnakeNPC(PLAYER_TWO_KEYMAP, "npc", new Point(6, 6), "thistle", "left", snakes[0]);
+  
+  snakes.push(p2Snake)
 
-  let snakes = [p1Snake()];
-
-  const p2Snake = () => {
-    return new SnakeNPC(PLAYER_TWO_KEYMAP, "npc", new Point(6, 6), "left", "thistle", snakes[0]);
-  }
-
-  snakes.push(p2Snake())
-
-  console.log({ snakes })
-
-  const game = new Game(snakes, 4);
+  game = new Game(snakes, 4);
 
   game.start();
 }
