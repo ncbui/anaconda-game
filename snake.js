@@ -126,6 +126,20 @@ class Point {
     }
   }
 
+  /** Return an array of neighbors */
+
+  neighbors(pt) {
+
+    let neighbors = [
+      new Point(pt.x - 1, pt.y),
+      new Point(pt.x + 1, pt.y),
+      new Point(pt.x, pt.y - 1),
+      new Point(pt.x, pt.y + 1),
+    ]
+    
+    return neighbors;
+  }
+
 }
 
 
@@ -269,7 +283,7 @@ class Snake {
 
   /** Calculate where the new head would be if snake continues
    * 
-   * @param {*} currentHead 
+   * @param {*} currentHead: the Point containing snakeHead
    */
 
   _calculateNewHead(currentHead = this.head()) {
@@ -362,6 +376,21 @@ class SnakeNPC extends Snake {
     return (newHead.willCrashIntoWall() ||
       this.checkCrashIntoSelf(newHead) ||
       this.checkCrashIntoOtherSnake(otherSnake, newHead))
+  }
+
+  /** Find a path to a pellet */
+  findPath(head, pellet) {
+    let frontier = []
+    frontier.push(head);
+
+    let reached = new Set();
+    reached.add(head);
+
+    let current;
+
+    while (frontier) {
+      current = frontier.shift();
+    }
   }
 
   /** Move snake one move towards food or safety */
