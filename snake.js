@@ -9,7 +9,7 @@ const HEIGHT = 24;
 // translate game board size to pixels
 const SCALE = 12;
 
-const GAME_DELAY_MS = 400; // FIXME: increased to test algo
+const GAME_DELAY_MS = 150;
 
 const PLAYER_ONE_KEYMAP = {
   ArrowLeft: "left", ArrowRight: "right", ArrowUp: "up", ArrowDown: "down",
@@ -380,76 +380,6 @@ class SnakeNPC extends Snake {
       this.checkCrashIntoSelf(newHead) ||
       this.checkCrashIntoOtherSnake(otherSnake, newHead))
   }
-
-  /** Find a path to a pellet 
-   * 
-   * Move head into open queue
-   * If open is NULL, end
-   * 
-   * Begin loop
-   * Remove lowest expense node from open queue,
-   * insert n into explored set
-   * 
-   * If node is the goal, the target state is reached, 
-   * end and rebuild the path by walking back to root
-   * If node is not the goal,
-   *    For each neighbor, if nb has not been explored, 
-   *      in
-   *      add to open queue
-   *  
-   * 
-   * Can I make a 
-  */
-  findPath(head, food) {
-    let came_from = { head: null };
-    let dFromHead = { head: 0 };
-    let dToFood = distance(food.pt, n);
-
-    let path = [];
-    let current;
-
-    let frontier = new priorityH();
-    frontier.insert(head, 0);
-
-
-    const distance = ( a, b) => {
-      // TODO manhattan distance
-      return Math.abs(a.x - b.x) + Math.abs(a.y - b.y)
-    }
-
-    while (!frontier.isEmpty()) {
-      current = frontier.get() // remove from priority queue
-
-      if (current == food.pt) break;
-
-      let neighbors = current.getNeighbors();
-      let distance;
-      // filter neighbors for pts that aren't blocked
-
-      neighbors.forEach( n => {
-        let newDistance = dFromHead[current] + 1;
-
-        if ((!dFromHead[n]) || new_cost < dFromHead[n]) {
-          dFromHead[n] = new_cost; // add this cost
-          distance = newDistance + dToFood;
-          frontier.put(n, distance);
-          came_from[n] = current;
-        }})
-    }
-
-    // reconstruct path by following arrows from goal to start
-    current = food; 
-
-    while (current != head) {
-      path.push(current);
-      current = came_from[current]
-    }
-
-    path.push(head) // FIXME: may not need
-
-    return path;
-  }
-
   
   /** Calculate the closest food point and returns a list of possible directions  */
 
@@ -620,8 +550,6 @@ class Game {
       ctx.fillText(`Player Score: ${this.snakes[0].score}`, ((WIDTH * SCALE) / 2), ((HEIGHT * SCALE) / 2 + (.5 * SCALE)))
       ctx.fillText(`NPC Score: ${this.snakes[1].score}`, ((WIDTH * SCALE) / 2), ((HEIGHT * SCALE) / 2 + (2 * SCALE)))
       ctx.fillText(`${this.snakes[0].score > this.snakes[1].score ? "PLAYER" : "SnakeNPC"} WINS`, ((WIDTH * SCALE) / 2), ((HEIGHT * SCALE) / 2 + (5 * SCALE)))
-      startBtn.innerText = "Restart";
-      startBtn.addEventListener("click", () => document.location.href = ""); // FIXME: clear board without refresh
       return;
     }
 
@@ -632,17 +560,11 @@ class Game {
 
     this.refillFood();
 
-    // console.log("tickCount", this.tickCount)
-
 
     this.snakes.forEach( snake => {
 
-      snake.move(this.food); // FIXME: Only snakeNPC accepts an argument atm
+      snake.move(this.food); // Only snakeNPC accepts an argument atm
       snake.draw();
-
-      if (snake.score > 4 && snake.type === "npc") {
-        if (this.tickCount % 8 === 0) console.log(snake.findPath(snake.head()));
-      }
 
       const pellet = snake.eats(this.food);
       if (pellet) {
@@ -655,9 +577,8 @@ class Game {
 }
 
 
-function gameStart() {
+function gameStart(game = undefined) {
   let snakes = []; 
-  let game = undefined;
 
   /// Set up snakes, game, and start game
   startBtn.removeEventListener("click", gameStart);
@@ -668,7 +589,6 @@ function gameStart() {
 
   const p1Snake = () => {
     if (mode.includes('Helpful')) {
-      // // keymap, start, color, type, dir, other
       return new Snake(PLAYER_ONE_KEYMAP, new Point(12, 12), "purple", "helpful");
     } else if (mode.includes('Chaotic')) {
       return new Snake(PLAYER_ONE_KEYMAP, new Point(12, 12), "red", "chaotic");
