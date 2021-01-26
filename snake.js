@@ -8,7 +8,7 @@ const HEIGHT = 24;
 // translate game board size to pixels
 const SCALE = 12;
 
-const GAME_DELAY_MS = 175;
+const GAME_DELAY_MS = 400; // FIXME: increased to test algo
 
 const PLAYER_ONE_KEYMAP = {
   ArrowLeft: "left", ArrowRight: "right", ArrowUp: "up", ArrowDown: "down",
@@ -129,14 +129,11 @@ class Point {
   /** Return an array of neighbors */
 
   neighbors() {
-    let x = this.pt.x;
-    let y = this.pt.y;
-
     let neighbors = [
-      new Point(x - 1, y),
-      new Point(x + 1, y),
-      new Point(x, y - 1),
-      new Point(x, y + 1),
+      new Point(this.x - 1, this.y),
+      new Point(this.x + 1, this.y),
+      new Point(this.x, this.y - 1),
+      new Point(this.x, this.y + 1),
     ]
 
     return neighbors;
@@ -178,7 +175,7 @@ class Pellet {
  **/
 
 class Snake {
-  constructor(keymap, type, start, color = "orange", dir = "right",) {
+  constructor(keymap, start, color = "orange", type = "classic", dir = "right") {
     this.keymap = keymap;
     this.type = type;
     this.parts = [start]; // list of Points in snake body
@@ -366,11 +363,13 @@ class Snake {
  **/
 
 class SnakeNPC extends Snake {
-  constructor(keymap, type, start, color, dir, other) {
-    super(keymap, type, start, dir, color) // inherit from snake
+  // keymap, start, color, type, dir, other
+  constructor(keymap, start, color, type, dir, other ) {
+    super(keymap, start, color, type, dir) // inherit from snake
     this.tickCount = 0;
     this.other = other;
     this.color = '#FFF59B';
+    this.type = "npc";
   }
 
   /** Did snake crash into wall, self, or other snake? */
@@ -381,71 +380,44 @@ class SnakeNPC extends Snake {
       this.checkCrashIntoOtherSnake(otherSnake, newHead))
   }
 
-  // /** Find a path to a pellet */
-  // findPath(head, pellet) {
-  //   let frontier = []
-  //   frontier.push(head);
+  /** Find a path to a pellet */
+  findPath(head, food, current = [], frontier =  [], came_from = {}) {
+    if (!head) return "no head";
 
-  //   let reached = new Set();
-  //   reached.add(head);
+    frontier.push(head);
+    // Each node points to the node it came from
+    came_from[head] = null; 
 
-  //   let current;
+     //   while (frontier) {
+    current = frontier.shift();
+    if (current === goal) break;
+    // TODO: stop when X tiles reached
 
-  //   while (frontier) {
-  //     current = frontier.shift();
+    let neighbors = current.neighbors()
 
-  //     console.log(current);
+    neighbors.forEach(n => {
+      if (!came_from[n]) {
+        frontier.push(n)
+        came_from[n] = current;
+      }})
+    // }
 
-  //     for (let next in current.neighbors())
-  //       if (!reached.get(current)) {
-  //         frontier.push(next);
-  //         reached.add(next);
-  //       }  
-  //   }
-  // }
-
-  /** Move snake one move towards food or safety */
-
-  move(food) {
-
-    const dirToFood = this.findFood(food);
-    let numDirChanges = 0;
-
-    if (dirToFood === "left" && this.nextDir !== "right") {
-      this.nextDir = dirToFood;
-    } else if (dirToFood === "right" && this.nextDir !== "left") {
-      this.nextDir = dirToFood;
-    } else if (dirToFood === "down" && this.nextDir !== "up") {
-      this.nextDir = dirToFood;
-    } else if (dirToFood === "up" && this.nextDir !== "down") {
-      this.nextDir = dirToFood
-    };
-
-    this.dir = this.nextDir;
-    let newHead = this._calculateNewHead(this.head());
-
-    // if this direction causes death, find another
-    while (this.checkCrashIntoThings(this.other, newHead)) {
-      if (numDirChanges > 8) break;
-      this.changeRandomDir(this.dir);
-      this.dir = this.nextDir;
-
-      newHead = this._calculateNewHead(this.head());
-
-      numDirChanges++;
+    // reconstruct path by following arrows from goal to start
+    current = food; 
+    let path = []
+    while (current != head) {
+      path.push(current);
+      current = came_from[current]
     }
+    path.push(head) // optional
 
-    this.parts.unshift(newHead);
 
-    // If we're not growing (didn't recently eat a pellet), remove the tail of
-    // the snake body, so it moves and doesn't grow. If we're growing, decrement
-    // growth so we're closer to not-growing-any-more.
-    if (this.growBy === 0) this.parts.pop();
-    else this.growBy--;
+    // console.log(!came_from["one"])
 
-    this.tickCount++;
+    return "head"
   }
 
+  
   /** Calculate the closest food point and returns a list of possible directions  */
 
   findFood(food, head = this.head()) {
@@ -487,6 +459,49 @@ class SnakeNPC extends Snake {
 
     return newDirs;
   }
+
+  /** Move snake one move towards food or safety */
+
+  move(food) {
+    
+    const dirToFood = this.findFood(food);
+    let numDirChanges = 0;
+
+    if (dirToFood === "left" && this.nextDir !== "right") {
+      this.nextDir = dirToFood;
+    } else if (dirToFood === "right" && this.nextDir !== "left") {
+      this.nextDir = dirToFood;
+    } else if (dirToFood === "down" && this.nextDir !== "up") {
+      this.nextDir = dirToFood;
+    } else if (dirToFood === "up" && this.nextDir !== "down") {
+      this.nextDir = dirToFood
+    };
+
+    this.dir = this.nextDir;
+    let newHead = this._calculateNewHead(this.head());
+
+    // if this direction causes death, find another
+    while (this.checkCrashIntoThings(this.other, newHead)) {
+      if (numDirChanges > 8) break;
+      this.changeRandomDir(this.dir);
+      this.dir = this.nextDir;
+
+      newHead = this._calculateNewHead(this.head());
+
+      numDirChanges++;
+    }
+
+    this.parts.unshift(newHead);
+
+    // If we're not growing (didn't recently eat a pellet), remove the tail of
+    // the snake body, so it moves and doesn't grow. If we're growing, decrement
+    // growth so we're closer to not-growing-any-more.
+    if (this.growBy === 0) this.parts.pop();
+    else this.growBy--;
+
+    this.tickCount++;
+  }
+
 
 }
 
@@ -584,17 +599,24 @@ class Game {
 
     this.refillFood();
 
-    for (const snake of this.snakes) {
+    // console.log("tickCount", this.tickCount)
+
+
+    this.snakes.forEach( snake => {
 
       snake.move(this.food); // FIXME: Only snakeNPC accepts an argument atm
       snake.draw();
+
+      if (snake.score > 4 && snake.type === "npc") {
+        if (this.tickCount % 8 === 0) console.log(snake.findPath(snake.head()));
+      }
 
       const pellet = snake.eats(this.food);
       if (pellet) {
         this.removeFood(pellet);
         snake.score += snake.growBy;
       };
-    }
+    })
 
   }
 }
@@ -602,7 +624,7 @@ class Game {
 
 function gameStart() {
   let snakes = []; 
-  let game = new Game(snakes, 0);
+  let game = undefined;
 
   /// Set up snakes, game, and start game
   startBtn.removeEventListener("click", gameStart);
@@ -613,16 +635,17 @@ function gameStart() {
 
   const p1Snake = () => {
     if (mode.includes('Helpful')) {
-      return new Snake(PLAYER_ONE_KEYMAP, "helpful", new Point(12, 12), "purple");
+      // // keymap, start, color, type, dir, other
+      return new Snake(PLAYER_ONE_KEYMAP, new Point(12, 12), "purple", "helpful");
     } else if (mode.includes('Chaotic')) {
-      return new Snake(PLAYER_ONE_KEYMAP, "chaotic", new Point(12, 12), "red");
+      return new Snake(PLAYER_ONE_KEYMAP, new Point(12, 12), "red", "chaotic");
     } else {
-      return new Snake(PLAYER_ONE_KEYMAP, "classic", new Point(12, 12));
+      return new Snake(PLAYER_ONE_KEYMAP, new Point(12, 12));
   }}
   
   snakes.push(p1Snake())
-  const p2Snake = new SnakeNPC(PLAYER_TWO_KEYMAP, "npc", new Point(6, 6), "thistle", "left", snakes[0]);
-  
+
+  const p2Snake = new SnakeNPC(PLAYER_TWO_KEYMAP, new Point(6, 6), "thistle", "npc", "left", snakes[0]);
   snakes.push(p2Snake)
 
   game = new Game(snakes, 4);
