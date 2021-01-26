@@ -5,12 +5,17 @@ Browser-based game built with the Canvas API and javascipt.
 
 ## How to Play
 
+Play as one of three snakes: 
+- Classic: the classic arcade snake
+- Helpful: a helpful buddy who will turn to avoid hitting walls
+- Chaotic: this buddy delights in mixing it up a bit. Will turn in a random direction every now and then.
+
+To play: 
 1. Use the arrow keys to move your snake around the board.
 2. Eat food to grow larger.
-3. Outgrow the other snake.
+3. Outgrow the snake NPC.
 4. The game ends when one of the snake runs into a wall or eats itself or the other.
 
-Play as one of three snakes: Classic, Helpful, Chaotic
 
 ## Demo
 
@@ -18,7 +23,7 @@ Play the [demo](https://ncbui.github.io/Anaconda-game/)
 
 ## NPC Movement
 
-The Snake NPC uses obstacle detection to find the shortest path to nearby food.
+The Snake NPC identifies the nearest food pellet and moves towards it. It uses obstacle detection to change direction on its way there.
 
 Food Detection:
 - on each move, find the nearest pellet
