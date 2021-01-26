@@ -1,5 +1,6 @@
 "use strict";
 
+
 /** Multiplayer Snake game. */
 
 const WIDTH = 30;
@@ -380,41 +381,73 @@ class SnakeNPC extends Snake {
       this.checkCrashIntoOtherSnake(otherSnake, newHead))
   }
 
-  /** Find a path to a pellet */
-  findPath(head, food, current = [], frontier =  [], came_from = {}) {
-    if (!head) return "no head";
+  /** Find a path to a pellet 
+   * 
+   * Move head into open queue
+   * If open is NULL, end
+   * 
+   * Begin loop
+   * Remove lowest expense node from open queue,
+   * insert n into explored set
+   * 
+   * If node is the goal, the target state is reached, 
+   * end and rebuild the path by walking back to root
+   * If node is not the goal,
+   *    For each neighbor, if nb has not been explored, 
+   *      in
+   *      add to open queue
+   *  
+   * 
+   * Can I make a 
+  */
+  findPath(head, food) {
+    let came_from = { head: null };
+    let dFromHead = { head: 0 };
+    let dToFood = distance(food.pt, n);
 
-    frontier.push(head);
-    // Each node points to the node it came from
-    came_from[head] = null; 
+    let path = [];
+    let current;
 
-     //   while (frontier) {
-    current = frontier.shift();
-    if (current === goal) break;
-    // TODO: stop when X tiles reached
+    let frontier = new priorityH();
+    frontier.insert(head, 0);
 
-    let neighbors = current.neighbors()
 
-    neighbors.forEach(n => {
-      if (!came_from[n]) {
-        frontier.push(n)
-        came_from[n] = current;
-      }})
-    // }
+    const distance = ( a, b) => {
+      // TODO manhattan distance
+      return Math.abs(a.x - b.x) + Math.abs(a.y - b.y)
+    }
+
+    while (!frontier.isEmpty()) {
+      current = frontier.get() // remove from priority queue
+
+      if (current == food.pt) break;
+
+      let neighbors = current.getNeighbors();
+      let distance;
+      // filter neighbors for pts that aren't blocked
+
+      neighbors.forEach( n => {
+        let newDistance = dFromHead[current] + 1;
+
+        if ((!dFromHead[n]) || new_cost < dFromHead[n]) {
+          dFromHead[n] = new_cost; // add this cost
+          distance = newDistance + dToFood;
+          frontier.put(n, distance);
+          came_from[n] = current;
+        }})
+    }
 
     // reconstruct path by following arrows from goal to start
     current = food; 
-    let path = []
+
     while (current != head) {
       path.push(current);
       current = came_from[current]
     }
-    path.push(head) // optional
 
+    path.push(head) // FIXME: may not need
 
-    // console.log(!came_from["one"])
-
-    return "head"
+    return path;
   }
 
   

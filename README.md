@@ -14,25 +14,17 @@ Play as one of three snakes: Classic, Helpful, Chaotic
 
 ## Demo
 
-Play the [demo](https://ncbui.github.io/JS-OO-Snake/)
+Play the [demo](https://ncbui.github.io/Anaconda-game/)
 
-## Pathfinding NPC
+## NPC Movement
 
-The Snake NPC uses the A* search algorithm and obstacle detection to find the shortest path to nearby food.
+The Snake NPC uses obstacle detection to find the shortest path to nearby food.
 
 Food Detection:
-- on each move, calculates Manhattan taxicab distance for all of the food pellets to find the nearest pellet
-- FIXME: comparing horizontal or vertical distance to the nearest pellet pick direction for next move
-
-Path calculation:
-redblobgames.com/pathfinding/a-star/introduction.html
+- on each move, find the nearest pellet
+- move towards the pellet
+- if an obstacle is detected, change directions and continue to move towards the pellet
 
 
-When there is possibility of it crashing into things, FIXME: random direction will be generated for its next move.
+When there is possibility of it crashing into things, random direction will be generated for its next move.
 
-Path recalculation:
-- Follows a local repair strategy when the path needs to be recalculated. 
-- Finds a good path nearby by recalculating the first FIXME: X steps on the path and slices it into stored path.
-
-
-When the NPC (FIXME: criteria for recalculation), the A* search algorithm is used to calculate a path to the the nearest food pellet. 

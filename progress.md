@@ -45,6 +45,17 @@
 13. DRYing up classes and functions
     Single class for player snake now accepts type argument to determine movement pattern
 
+14. Rebranding to Anaconda
+    directions for play added
+    limit game to always being player vs snake
+    styled directions and explanations
+
+15. Pathfinding functionality
+    add method to find the neighbors of a point
+    lay out structure for 
+
+    
+
 
 
 
@@ -56,5 +67,14 @@ TODO: for player experience
 
 
 Finding an algorithm for snakeNPC to find the nearest pellet
-- Nearest neighbors algorithm
+see Amit Patel's neighbors algo: https://www.redblobgames.com/pathfinding/grids/graphs.html
 
+Todo Obstacle strategy https://www.redblobgames.com/pathfinding/grids/graphs.html
+https://www.redblobgames.com/pathfinding/early-exit/
+
+Path recalculation:
+- Follows a local repair strategy when the path needs to be recalculated. 
+- Finds a good path nearby by recalculating the first FIXME: X steps on the path and slices it into stored path.
+
+
+When the NPC (FIXME: criteria for recalculation), the A* search algorithm is used to calculate a path to the the nearest food pellet. 
