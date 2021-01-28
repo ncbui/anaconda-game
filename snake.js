@@ -369,8 +369,6 @@ class SnakeNPC extends Snake {
     super(keymap, start, color, type, dir) // inherit from snake
     this.tickCount = 0;
     this.other = other;
-    this.color = '#FFF59B';
-    this.type = "npc";
   }
 
   /** Did snake crash into wall, self, or other snake? */
@@ -591,14 +589,14 @@ function gameStart(game = undefined) {
     if (mode.includes('Helpful')) {
       return new Snake(PLAYER_ONE_KEYMAP, new Point(12, 12), "purple", "helpful");
     } else if (mode.includes('Chaotic')) {
-      return new Snake(PLAYER_ONE_KEYMAP, new Point(12, 12), "red", "chaotic");
+      return new Snake(PLAYER_ONE_KEYMAP, new Point(12, 12), "maroon", "chaotic");
     } else {
       return new Snake(PLAYER_ONE_KEYMAP, new Point(12, 12));
   }}
   
   snakes.push(p1Snake())
 
-  const p2Snake = new SnakeNPC(PLAYER_TWO_KEYMAP, new Point(6, 6), "thistle", "npc", "left", snakes[0]);
+  const p2Snake = new SnakeNPC(PLAYER_TWO_KEYMAP, new Point(6, 6), "turquoise", "npc", "left", snakes[0]);
   snakes.push(p2Snake)
 
   game = new Game(snakes, 4);
