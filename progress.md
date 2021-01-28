@@ -52,29 +52,29 @@
 
 15. Pathfinding functionality
     add method to find the neighbors of a point
-    lay out structure for 
+    implement priority queue using an array as a heap (math is rad)
+
 
     
 
 
+### Upcoming features
 
+Adding an A* search algo to the snakeNPC to prevent it from trapping itself. 
+    See:
+    https://www.redblobgames.com/pathfinding/grids/graphs.html
 
-TODO: for player experience
-    - directions for play
-    - limit game to always being player vs snake
-    - style directions and explanations
-
-
-
-Finding an algorithm for snakeNPC to find the nearest pellet
-see Amit Patel's neighbors algo: https://www.redblobgames.com/pathfinding/grids/graphs.html
-
-Todo Obstacle strategy https://www.redblobgames.com/pathfinding/grids/graphs.html
-https://www.redblobgames.com/pathfinding/early-exit/
+Decide when path recalculation should occur
+    When food list changes?
+    Schedule for every X moves?
 
 Path recalculation:
 - Follows a local repair strategy when the path needs to be recalculated. 
 - Finds a good path nearby by recalculating the first FIXME: X steps on the path and slices it into stored path.
+    See:
+    https://www.redblobgames.com/pathfinding/grids/graphs.html
+    https://www.redblobgames.com/pathfinding/early-exit/
 
-
-When the NPC (FIXME: criteria for recalculation), the A* search algorithm is used to calculate a path to the the nearest food pellet. 
+Changes to scoring:
+- Penalty to the snake that crashed
+- ?? Track user's highest score with browser?
