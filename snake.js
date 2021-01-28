@@ -365,12 +365,10 @@ class Snake {
 
 class SnakeNPC extends Snake {
   // keymap, start, color, type, dir, other
-  constructor(keymap, start, color, type, dir, other ) {
+  constructor(keymap, start, color, type = "npc", dir, other ) {
     super(keymap, start, color, type, dir) // inherit from snake
     this.tickCount = 0;
     this.other = other;
-    this.color = '#FFF59B';
-    this.type = "npc";
   }
 
   /** Did snake crash into wall, self, or other snake? */
@@ -678,7 +676,7 @@ function gameStart() {
   
   snakes.push(p1Snake())
 
-  const p2Snake = new SnakeNPC(PLAYER_TWO_KEYMAP, new Point(6, 6), "thistle", "npc", "left", snakes[0]);
+  const p2Snake = new SnakeNPC(PLAYER_TWO_KEYMAP, new Point(6, 6), "#DBF3FA", "npc", "left", snakes[0]);
   snakes.push(p2Snake)
 
   game = new Game(snakes, 4);
