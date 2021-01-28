@@ -1,6 +1,6 @@
 # Anaconda Game
 
-Snake x Blockade
+Blockade meets Snake.
 Browser-based game built with the Canvas API and javascipt.
 
 ## How to Play
@@ -10,11 +10,10 @@ Play as one of three snakes:
 - Helpful: a helpful buddy who will turn to avoid hitting walls
 - Chaotic: this buddy delights in mixing it up a bit. Will turn in a random direction every now and then.
 
-To play: 
 1. Use the arrow keys to move your snake around the board.
 2. Eat food to grow larger.
-3. Outgrow the snake NPC.
-4. The game ends when one of the snake runs into a wall or eats itself or the other.
+3. Outgrow the other snake.
+4. The game ends when one of the snake runs into something that isn't food.
 
 
 ## Demo
@@ -26,10 +25,11 @@ Play the [demo](https://ncbui.github.io/Anaconda-game/)
 The Snake NPC identifies the nearest food pellet and moves towards it. It uses obstacle detection to change direction on its way there.
 
 Food Detection:
-- on each move, find the nearest pellet
-- move towards the pellet
-- if an obstacle is detected, change directions and continue to move towards the pellet
-
+- on each move, find the nearest pellet.
+- move towards the pellet.
+- if an obstacle is detected, change directions and continue to move towards the pellet.
 
 When there is possibility of it crashing into things, random direction will be generated for its next move.
+
+## Upcoming features
 
