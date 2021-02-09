@@ -514,20 +514,7 @@ class SnakeNPC extends Snake {
    * 
    * Can I make a 
   */
-  findPath(food, head = this.head()) {
-    // FIXME: DRY along with block from findFood
-    let nearestPellet;
-    let dToPellet;
-
-    food.forEach(f => {
-      const distance = head.distanceFrom(f.pt);
-
-      if (!nearestPellet || distance < dToPellet) {
-        dToPellet = distance;
-        nearestPellet = f.pt;
-      }
-    });
-
+  findPath(nearestPellet, head = this.head()) {
 
     let frontier = new Frontier();
     let came_from = { head: null };
@@ -636,9 +623,9 @@ class SnakeNPC extends Snake {
 
     let nearestPellet = this.findNearestFood(food);
 
-    // if (this.score > 4 && tickCount % 10 === 0) {
-    //   this.findPath()
-    // }
+    if (this.score > 4 && tickCount % 10 === 0) {
+      this.findPath(nearestPellet)
+    }
 
     const dirToFood = this.findFood(nearestPellet);
     let numDirChanges = 0;
