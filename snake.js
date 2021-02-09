@@ -583,11 +583,8 @@ class SnakeNPC extends Snake {
     return path;
   }
 
-  
-  /** Calculate the closest food point and returns a list of possible directions  */
-
-  findFood(food, head = this.head()) {
-
+  /** Given a list of food, returns the nearest food pellet  */
+  findNearestFood(food, head = this.head()) {
     let nearestPellet;
     let dToPellet;
 
@@ -599,6 +596,13 @@ class SnakeNPC extends Snake {
         nearestPellet = f.pt;
       }
     });
+
+    return nearestPellet;
+  }
+
+  /** Given the nearest food pellet, returns a list of possible directions  */
+
+  findFood(nearestPellet, head = this.head()) {
 
     let vector = head.vectorTo(nearestPellet);
 
@@ -628,9 +632,15 @@ class SnakeNPC extends Snake {
 
   /** Move snake one move towards food or safety */
 
-  move(food) {
-    
-    const dirToFood = this.findFood(food);
+  move(food, tickCount) {
+
+    let nearestPellet = this.findNearestFood(food);
+
+    // if (this.score > 4 && tickCount % 10 === 0) {
+    //   this.findPath()
+    // }
+
+    const dirToFood = this.findFood(nearestPellet);
     let numDirChanges = 0;
 
     if (dirToFood === "left" && this.nextDir !== "right") {
@@ -770,21 +780,7 @@ class Game {
 
     this.snakes.forEach( snake => {
 
-      // snake.move(this.food); // FIXME: Only snakeNPC accepts an argument atm
-      // snake.draw();
-
-      // if (snake.score > 4 && snake.type === "npc") {
-      //   if (this.tickCount % 10 === 0) snake.findPath(this.food);
-      // }
-
-      if (snake.type === "npc") {
-        snake.move(this.food);
-        if (snake.score > 4 && this.tickCount % 10 === 0) {
-          snake.findPath(this.food)
-        }
-      } else {
-        snake.move()
-      }
+      snake.move(this.food, this.tick) // FIXME: Only snakeNPC accepts an argument atm
       snake.draw();
       
 
