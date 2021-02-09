@@ -1,6 +1,5 @@
 "use strict";
 
-
 /** Multiplayer Snake game. */
 
 const WIDTH = 30;
@@ -9,7 +8,7 @@ const HEIGHT = 24;
 // translate game board size to pixels
 const SCALE = 12;
 
-const GAME_DELAY_MS = 400; // FIXME: increased to test algo
+const GAME_DELAY_MS = 800; // FIXME: increased to test algo
 
 const PLAYER_ONE_KEYMAP = {
   ArrowLeft: "left", ArrowRight: "right", ArrowUp: "up", ArrowDown: "down",
@@ -118,6 +117,15 @@ class Point {
     return parseFloat(D * (dx + dy));
   }
 
+  /** Returns the sum of the distance between three points */
+
+  distanceHeuristic(start, end) {
+    const ptToStart = pt.distanceFrom(start);
+    const ptToEnd = pt.distanceFrom(end);
+
+    return parseFloat(ptToStart + ptToEnd);
+  }
+
   /** Return object containing a vector to another point */
 
   vectorTo(pt) {
@@ -161,6 +169,113 @@ class Pellet {
 
   draw() {
     this.pt.draw("green");
+  }
+}
+
+// class Step {
+//   constructor(pt, distance) {
+//     this.x = pt.x; // xy coordinates
+//     this.y = pt.y; // xy coordinates
+//     this.distance = distance; // sum of distance to head-node and food-node
+//   }
+
+//   getNeighbors() {
+//     neighbors = [
+//       [this.x + 1, this.y + 0],
+//       [this.x - 1, this.y + 0],
+//       [this.x + 0, this.y + 1],
+//       [this.x + 0, this.y - 1],
+//     ]
+
+//     return neighbors;
+//   }
+// }
+
+
+/** Tracks priority using a min-heap */
+// sort by lowest distance
+class Frontier {
+
+  constructor() {
+    // starts the heap with null at 0th
+    this.heap = [null];
+  }
+
+  /** Returns the pt with smallest distance without removing*/
+
+  peekMin() {
+    return this.heap[1];
+  }
+
+  /** Returns the pt with smallest distance and removes it*/
+  removeMin() {
+    let min = this.heap[1];
+    let last = this.heap[this.heap.length - 1];
+
+    // if there is one node, remove it
+    // if there are two nodes, switch and bubble down
+    if (this.heap.length === 2) {
+      this.heap.splice(1, 1) 
+    } else if (this.heap.length === 3) {
+      if (this.heap[1].distance > this.heap[2].distance) {
+        [this.heap[1], this.heap[2]] = [this.heap[2], this.heap[1]]
+      }
+    } else {
+      // set last ele to root
+      this.heap[1] = last;
+      // remove last ele
+      this.heap.splice(-1, 1);
+
+      // bubble down
+      let i = 1;
+      let leftChildIdx = (i * 2)
+      let rightChildIdx = (i * 2) + 1
+      let current = this.heap[i];
+      let leftChild = this.heap[leftChildIdx];
+      let rightChild = this.heap[rightChildIdx];
+
+
+      let areChildrnCloser = () => {
+        return (current.distance > leftChild.distance
+          || current.distance > rightChild.distance)
+      }
+
+      while (areChildrnCloser 
+        && leftChild
+        && rightChild) {
+
+        // bubble down through smallest child
+        if (leftChild < rightChild) {
+          [current, leftChild] = [leftChild, current]
+          i = leftChildIdx;
+        } else {
+          [current, rightChild] = [rightChild, current]
+          i = rightChildIdx;
+        }
+      }
+  } 
+    return min;
+  }
+
+  /** Add a heap and heapify by distance */
+
+  insert(pt, distance) {
+    // add to end
+    this.heap.push({pt, distance}); 
+
+    // if we need to, find the right place
+    // compare added pt to parent (aka i/2), swap if needed
+    if (this.heap.length > 2) {
+      let i = this.heap.length - 1   //idx of newly inserted pt
+      let current = this.heap[i]
+      let parent = this.heap[Math.floor(i / 2)]
+
+      // if parent exists and is further than current node, switch
+      while (parent && parent.distance > current.distance) {
+        [parent, current] = [current, parent]
+        i = Math.floor(i / 2) // set index to parent's 
+      }
+    }
   }
 }
 
@@ -369,6 +484,7 @@ class SnakeNPC extends Snake {
     super(keymap, start, color, type, dir) // inherit from snake
     this.tickCount = 0;
     this.other = other;
+    this.path = [];
   }
 
   /** Did snake crash into wall, self, or other snake? */
@@ -398,52 +514,71 @@ class SnakeNPC extends Snake {
    * 
    * Can I make a 
   */
-  findPath(head, food) {
+  findPath(food, head = this.head()) {
+    // FIXME: DRY along with block from findFood
+    let nearestPellet;
+    let dToPellet;
+
+    food.forEach(f => {
+      const distance = head.distanceFrom(f.pt);
+
+      if (!nearestPellet || distance < dToPellet) {
+        dToPellet = distance;
+        nearestPellet = f.pt;
+      }
+    });
+
+
+    let frontier = new Frontier();
     let came_from = { head: null };
     let dFromHead = { head: 0 };
-    let dToFood = distance(food.pt, n);
-
     let path = [];
-    let current;
+    
 
-    let frontier = new priorityH();
+    // Point now has a distanceFrom(pt) and distanceHeuristic method
+
+    // console.log(frontier)
     frontier.insert(head, 0);
+    // console.log({head, frontier})
+    let current = frontier.peekMin();
 
+    while (frontier.heap.length > 1) {
 
-    const distance = ( a, b) => {
-      // TODO manhattan distance
-      return Math.abs(a.x - b.x) + Math.abs(a.y - b.y)
     }
+    // let current = frontier.peekMin();
 
-    while (!frontier.isEmpty()) {
-      current = frontier.get() // remove from priority queue
-
-      if (current == food.pt) break;
+    while (frontier.length > 1) {
+      if (current === nearestPellet) break;
 
       let neighbors = current.getNeighbors();
-      let distance;
-      // filter neighbors for pts that aren't blocked
 
-      neighbors.forEach( n => {
-        let newDistance = dFromHead[current] + 1;
+      // for each neighbor
+        // if this neighbor is not in frontier or came_from
+        // calculate distance from step to head, add to dFromHead
 
-        if ((!dFromHead[n]) || new_cost < dFromHead[n]) {
-          dFromHead[n] = new_cost; // add this cost
-          distance = newDistance + dToFood;
-          frontier.put(n, distance);
-          came_from[n] = current;
-        }})
+      // neighbors.forEach( n => {
+      //   let newDistance = dFromHead[current] + 1;
+
+      //   if ((!dFromHead[n]) || new_cost < dFromHead[n]) {
+      //     dFromHead[n] = new_cost; // add this cost
+      //     distance = newDistance + dToFood;
+      //     frontier.put(n, distance);
+      //     came_from[n] = current;
+      //   }})
+        
+      current = frontier.removeMin();
     }
 
-    // reconstruct path by following arrows from goal to start
-    current = food; 
 
-    while (current != head) {
-      path.push(current);
-      current = came_from[current]
-    }
 
-    path.push(head) // FIXME: may not need
+  //   // reconstruct path by following arrows from goal to start
+  //   current = food; 
+
+  //   while (current != head) {
+  //     path.push(current);
+  //     current = came_from[current]
+  //   }
+
 
     return path;
   }
@@ -635,12 +770,23 @@ class Game {
 
     this.snakes.forEach( snake => {
 
-      snake.move(this.food); // FIXME: Only snakeNPC accepts an argument atm
-      snake.draw();
+      // snake.move(this.food); // FIXME: Only snakeNPC accepts an argument atm
+      // snake.draw();
 
-      if (snake.score > 4 && snake.type === "npc") {
-        if (this.tickCount % 8 === 0) console.log(snake.findPath(snake.head()));
+      // if (snake.score > 4 && snake.type === "npc") {
+      //   if (this.tickCount % 10 === 0) snake.findPath(this.food);
+      // }
+
+      if (snake.type === "npc") {
+        snake.move(this.food);
+        if (snake.score > 4 && this.tickCount % 10 === 0) {
+          snake.findPath(this.food)
+        }
+      } else {
+        snake.move()
       }
+      snake.draw();
+      
 
       const pellet = snake.eats(this.food);
       if (pellet) {
