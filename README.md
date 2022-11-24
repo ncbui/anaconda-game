@@ -18,7 +18,7 @@ Play as one of three snakes:
 
 ## Demo
 
-Play the [demo](https://ncbui.github.io/Anaconda-game/)
+Play the [demo](https://ncbui.github.io/anaconda-game/)
 
 ## NPC Movement
 
