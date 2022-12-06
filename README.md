@@ -3,6 +3,12 @@
 Blockade meets Snake.
 Browser-based game built with the Canvas API and javascipt.
 
+
+## Play
+
+[play](https://ncbui.github.io/anaconda-game/)
+
+
 ## How to Play
 
 Play as one of three snakes: 
@@ -16,10 +22,6 @@ Play as one of three snakes:
 4. The game ends when one of the snake runs into something that isn't food.
 
 
-## Demo
-
-Play the [demo](https://ncbui.github.io/anaconda-game/)
-
 ## NPC Movement
 
 The Snake NPC identifies the nearest food pellet and moves towards it. It uses obstacle detection to change direction on its way there.
@@ -31,5 +33,8 @@ Food Detection:
 
 When there is possibility of it crashing into things, random direction will be generated for its next move.
 
+
 ## Upcoming features
 
+Scoring update 
+Pathfinding to avoid convex shapes
