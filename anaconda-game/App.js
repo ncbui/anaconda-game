@@ -34,8 +34,8 @@ export default function App() {
                     size: Constants.CELL_SIZE,
                     updateFrequency: 10,
                     nextMove: 10,
-                    xspeed: 0,
-                    yspeed: 0,
+                    xspeed: 1,
+                    yspeed: 1,
                     renderer: <Head />,
                   },
                   food: {
