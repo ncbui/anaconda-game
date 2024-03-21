@@ -1,19 +1,22 @@
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View } from 'react-native';
 import { GameEngine } from "react-native-game-engine";
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 import Constants from "./Constants";
 import Head from "./components/Head";
 import Food from "./components/Food";
 import Tail from "./components/Tail";
+import GameLoop from "./systems/GameLoop";
 
 export default function App() {
+  
   const BoardSize = Constants.GRID_SIZE * Constants.CELL_SIZE;
   const engine = useRef(null);
+  const [isGameRunning, setIsGameRunning] = useState(true);
+
   const randomPositions = (min, max) => {
     return Math.floor(Math.random() * (max - min + 1) + min);
   };
-
 
   return (
     <View style={styles.container}>
@@ -52,6 +55,16 @@ export default function App() {
                     renderer: <Tail />,
                   },
                 }} 
+                systems={[GameLoop]}
+                running={isGameRunning}
+                onEvent={(e) => {
+                  switch (e) {
+                    case "game-over":
+                      alert("Game over!");
+                      setIsGameRunning(false);
+                      return;
+                  }
+                }}
               />
       </View>
     </View>
