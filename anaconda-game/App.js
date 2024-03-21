@@ -3,6 +3,7 @@ import { StyleSheet, Text, View } from 'react-native';
 import { GameEngine } from "react-native-game-engine";
 import React, { useRef } from "react";
 import Constants from "./Constants";
+import Head from "./components/Head";
 
 export default function App() {
   const BoardSize = Constants.GRID_SIZE * Constants.CELL_SIZE;
@@ -19,6 +20,18 @@ export default function App() {
                   flex: null,
                   backgroundColor: "black",
                 }}
+                entities={{
+                  head: {
+                    position: [0, 0],
+                    borderRadius: 20,
+                    size: Constants.CELL_SIZE,
+                    updateFrequency: 10,
+                    nextMove: 10,
+                    xspeed: 0,
+                    yspeed: 0,
+                    renderer: <Head />,
+                  }
+                }} 
               />
       </View>
     </View>
