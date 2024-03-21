@@ -54,6 +54,7 @@
     add method to find the neighbors of a point
     implement priority queue using an array as a heap (math is rad)
 
+16. Convert game to react native app using https://blog.logrocket.com/react-native-game-development-tutorial/ guide. 
 
     
 
