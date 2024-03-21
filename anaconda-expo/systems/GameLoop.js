@@ -29,9 +29,13 @@ export default function (entities, { events, dispatch }) {
         }
       });
     }
-    head.nextMove = head.updateFrequency;
-    head.position[0] += head.xspeed;
-    head.position[1] += head.yspeed;
+
+    head.nextMove -= 1;
+    if (head.newMove === 0) {
+      head.nextMove = head.updateFrequency;
+      head.position[0] += head.xspeed;
+      head.position[1] += head.yspeed;
+    }
     
     return entities;
   }

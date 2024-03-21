@@ -20,66 +20,66 @@ export default function App() {
   
   return (
     <View style={styles.container}>
-    <View style={styles.canvas}>
-      <GameEngine
-              ref={engine}
-              style={styles.board}
-              entities={{
-                head: {
-                  position: [10, 10],
-                  size: Constants.CELL_SIZE,
-                  updateFrequency: 10,
-                  nextMove: 10,
-                  xspeed: 0,
-                  yspeed: 0,
-                  renderer: <Head />,
-                },
-                food: {
-                  position: [
-                    randomPositions(0, Constants.GRID_SIZE - 1),
-                    randomPositions(0, Constants.GRID_SIZE - 1),
-                    randomPositions(0, Constants.GRID_SIZE - 1),
-                  ],
-                  size: Constants.CELL_SIZE,
-                  renderer: <Food />,
-                },
-                tail: {
-                  size: Constants.CELL_SIZE,
-                  elements: [],
-                  renderer: <Tail />,
-                },
-              }} 
-              systems={[GameLoop]}
-            />
-      <View style={styles.controlContainer}>
-        <View style={styles.controllerRow}>
-          <TouchableOpacity onPress={() => engine.current.dispatch("move-up")}>
-            <View style={styles.controlBtn} />
-          </TouchableOpacity>
-        </View>
-        <View style={styles.controllerRow}>
-          <TouchableOpacity
-            onPress={() => engine.current.dispatch("move-left")}
-          >
-            <View style={styles.controlBtn} />
-          </TouchableOpacity>
-          <View style={[styles.controlBtn, { backgroundColor: null }]} />
-          <TouchableOpacity
-            onPress={() => engine.current.dispatch("move-right")}
-          >
-            <View style={styles.controlBtn} />
-          </TouchableOpacity>
-        </View>
-        <View style={styles.controllerRow}>
-          <TouchableOpacity
-            onPress={() => engine.current.dispatch("move-down")}
-          >
-            <View style={styles.controlBtn} />
-          </TouchableOpacity>
+      <View style={styles.canvas}>
+        <GameEngine
+                ref={engine}
+                style={styles.board}
+                entities={{
+                  head: {
+                    position: [10, 10],
+                    size: Constants.CELL_SIZE,
+                    updateFrequency: 10,
+                    nextMove: 10,
+                    xspeed: 1,
+                    yspeed: 1,
+                    renderer: <Head />,
+                  },
+                  food: {
+                    position: [
+                      randomPositions(0, Constants.GRID_SIZE - 1),
+                      randomPositions(0, Constants.GRID_SIZE - 1),
+                      randomPositions(0, Constants.GRID_SIZE - 1),
+                    ],
+                    size: Constants.CELL_SIZE,
+                    renderer: <Food />,
+                  },
+                  tail: {
+                    size: Constants.CELL_SIZE,
+                    elements: [],
+                    renderer: <Tail />,
+                  },
+                }} 
+                systems={[GameLoop]}
+              />
+        <View style={styles.controlContainer}>
+          <View style={styles.controllerRow}>
+            <TouchableOpacity onPress={() => engine.current.dispatch("move-up")}>
+              <View style={styles.controlBtn} />
+            </TouchableOpacity>
+          </View>
+          <View style={styles.controllerRow}>
+            <TouchableOpacity
+              onPress={() => engine.current.dispatch("move-left")}
+            >
+              <View style={styles.controlBtn} />
+            </TouchableOpacity>
+            <View style={[styles.controlBtn, { backgroundColor: null }]} />
+            <TouchableOpacity
+              onPress={() => engine.current.dispatch("move-right")}
+            >
+              <View style={styles.controlBtn} />
+            </TouchableOpacity>
+          </View>
+          <View style={styles.controllerRow}>
+            <TouchableOpacity
+              onPress={() => engine.current.dispatch("move-down")}
+            >
+              <View style={styles.controlBtn} />
+            </TouchableOpacity>
+          </View>
         </View>
       </View>
     </View>
-  </View>
 )};
 
 const styles = StyleSheet.create({
@@ -112,7 +112,7 @@ const styles = StyleSheet.create({
     borderStyle: "solid"
   },
   controlContainer: {
-    marginTop: 10,
+    marginTop: 30,
   },
   controllerRow: {
     flexDirection: "row",
