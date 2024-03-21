@@ -1,11 +1,13 @@
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View } from 'react-native';
 import { GameEngine } from "react-native-game-engine";
+import { TouchableOpacity } from "react-native-gesture-handler";
 import React, { useRef } from "react";
 import Constants from "./Constants";
 import Head from "./components/Head";
 import Food from "./components/Food";
 import Tail from "./components/Tail";
+import GameLoop from './systems/GameLoop';
 
 const randomPositions = (min, max) => {
   return Math.floor(Math.random() * (max - min + 1) + min);
@@ -24,7 +26,7 @@ export default function App() {
               style={styles.board}
               entities={{
                 head: {
-                  position: [0, 0],
+                  position: [10, 10],
                   size: Constants.CELL_SIZE,
                   updateFrequency: 10,
                   nextMove: 10,
@@ -47,7 +49,35 @@ export default function App() {
                   renderer: <Tail />,
                 },
               }} 
+              systems={[GameLoop]}
             />
+      <View style={styles.controlContainer}>
+        <View style={styles.controllerRow}>
+          <TouchableOpacity onPress={() => engine.current.dispatch("move-up")}>
+            <View style={styles.controlBtn} />
+          </TouchableOpacity>
+        </View>
+        <View style={styles.controllerRow}>
+          <TouchableOpacity
+            onPress={() => engine.current.dispatch("move-left")}
+          >
+            <View style={styles.controlBtn} />
+          </TouchableOpacity>
+          <View style={[styles.controlBtn, { backgroundColor: null }]} />
+          <TouchableOpacity
+            onPress={() => engine.current.dispatch("move-right")}
+          >
+            <View style={styles.controlBtn} />
+          </TouchableOpacity>
+        </View>
+        <View style={styles.controllerRow}>
+          <TouchableOpacity
+            onPress={() => engine.current.dispatch("move-down")}
+          >
+            <View style={styles.controlBtn} />
+          </TouchableOpacity>
+        </View>
+      </View>
     </View>
   </View>
 )};
@@ -55,7 +85,7 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#4C243B',
+    backgroundColor: '#B84A62',
     alignItems: 'center',
     justifyContent: 'center',
     padding: 50,
@@ -80,6 +110,19 @@ const styles = StyleSheet.create({
     borderWidth: 5,
     borderColor: "black",
     borderStyle: "solid"
-  }
-
+  },
+  controlContainer: {
+    marginTop: 10,
+  },
+  controllerRow: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  controlBtn: {
+    backgroundColor: "yellow",
+    borderRadius: 50,
+    width: 50,
+    height: 50,
+  },
 });

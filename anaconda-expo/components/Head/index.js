@@ -6,7 +6,7 @@ export default function Head({ position, size }) {
       style={{
         width: size,
         height: size,
-        backgroundColor: "#B84A62",
+        backgroundColor: "#ECA400",
         borderRadius: 10,
         position: "absolute",
         left: position[0] * size,
