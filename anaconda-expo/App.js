@@ -11,26 +11,17 @@ const randomPositions = (min, max) => {
   return Math.floor(Math.random() * (max - min + 1) + min);
 };
 
-
+const BoardSize = Constants.GRID_SIZE * Constants.CELL_SIZE;
 
 export default function App() {
-  const BoardSize = Constants.GRID_SIZE * Constants.CELL_SIZE;
   const engine = useRef(null);
+  
   return (
     <View style={styles.container}>
     <View style={styles.canvas}>
       <GameEngine
               ref={engine}
-              style={{
-                width: BoardSize,
-                height: BoardSize,
-                flex: null,
-                backgroundColor: "#EFE6E8",
-                borderRadius: 20,
-                borderWidth: 5,
-                borderColor: "black",
-                borderStyle: "solid"
-              }}
+              style={styles.board}
               entities={{
                 head: {
                   position: [0, 0],
@@ -43,6 +34,7 @@ export default function App() {
                 },
                 food: {
                   position: [
+                    randomPositions(0, Constants.GRID_SIZE - 1),
                     randomPositions(0, Constants.GRID_SIZE - 1),
                     randomPositions(0, Constants.GRID_SIZE - 1),
                   ],
@@ -78,6 +70,16 @@ const styles = StyleSheet.create({
     borderWidth: 10,
     borderColor: "black",
     borderStyle: "solid",
+  },
+  board: {
+    width: BoardSize,
+    height: BoardSize,
+    flex: null,
+    backgroundColor: "#EFE6E8",
+    borderRadius: 20,
+    borderWidth: 5,
+    borderColor: "black",
+    borderStyle: "solid"
   }
 
 });
