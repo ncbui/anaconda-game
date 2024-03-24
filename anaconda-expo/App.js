@@ -120,7 +120,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   controlBtn: {
-    backgroundColor: "#4C243B",
+    backgroundColor: "yellow",
     borderRadius: 50,
     width: 50,
     height: 50,
