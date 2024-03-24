@@ -2,39 +2,28 @@ import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View } from 'react-native';
 import { GameEngine } from "react-native-game-engine";
 import { TouchableOpacity } from "react-native-gesture-handler";
-import React, { useRef, useState } from "react";
+import React, { useRef } from "react";
 import Constants from "./Constants";
 import Head from "./components/Head";
 import Food from "./components/Food";
 import Tail from "./components/Tail";
 import GameLoop from './systems/GameLoop';
 
+const randomPositions = (min, max) => {
+  return Math.floor(Math.random() * (max - min + 1) + min);
+};
+
+const BoardSize = Constants.GRID_SIZE * Constants.CELL_SIZE;
 
 export default function App() {
-  const [isGameRunning, setIsGameRunning] = useState(true);
   const engine = useRef(null);
-
-  const randomPositions = (min, max) => {
-    return Math.floor(Math.random() * (max - min + 1) + min);
-  };
-
-  const BoardSize = Constants.GRID_SIZE * Constants.CELL_SIZE;
   
   return (
     <View style={styles.container}>
       <View style={styles.canvas}>
         <GameEngine
                 ref={engine}
-                style={{
-                  width: BoardSize,
-                  height: BoardSize,
-                  flex: null,
-                  backgroundColor: "#EFE6E8",
-                  borderRadius: 20,
-                  borderWidth: 5,
-                  borderColor: "black",
-                  borderStyle: "solid"
-                }}
+                style={styles.board}
                 entities={{
                   head: {
                     position: [10, 10],
@@ -61,14 +50,6 @@ export default function App() {
                   },
                 }} 
                 systems={[GameLoop]}
-                running={isGameRunning}
-                onEvent={(e) => {
-                  switch (e) {
-                    case "game-over":
-                      alert("Game over!");
-                      setIsGameRunning(false);
-                      return;
-                  }}}
               />
         <View style={styles.controlContainer}>
           <View style={styles.controllerRow}>
@@ -120,16 +101,16 @@ const styles = StyleSheet.create({
     borderColor: "black",
     borderStyle: "solid",
   },
-  // board: {
-  //   width: BoardSize,
-  //   height: BoardSize,
-  //   flex: null,
-  //   backgroundColor: "#EFE6E8",
-  //   borderRadius: 20,
-  //   borderWidth: 5,
-  //   borderColor: "black",
-  //   borderStyle: "solid"
-  // },
+  board: {
+    width: BoardSize,
+    height: BoardSize,
+    flex: null,
+    backgroundColor: "#EFE6E8",
+    borderRadius: 20,
+    borderWidth: 5,
+    borderColor: "black",
+    borderStyle: "solid"
+  },
   controlContainer: {
     marginTop: 30,
   },

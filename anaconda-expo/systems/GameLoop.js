@@ -2,8 +2,6 @@
 
 export default function (entities, { events, dispatch }) {
     const head = entities.head;
-    const food = entities.food;
-    const tail = entities.tail;
 
     if (events.length) {
       events.forEach((e) => {
@@ -35,17 +33,9 @@ export default function (entities, { events, dispatch }) {
     head.nextMove -= 1;
     if (head.newMove === 0) {
       head.nextMove = head.updateFrequency;
-      if (
-        head.position[0] + head.xspeed < 0  ||
-        head.position[0] + head.xspeed >= Constants.GRID_SIZE  ||
-        head.position[0] + head.yspeed < 0  ||
-        head.position[0] + head.yspeed >= Constants.GRID_SIZE
-       ) {
-        dispatch("game-over");
-        } else 
-        head.position[0] += head.xspeed;
-        head.position[1] += head.yspeed;
-      }
+      head.position[0] += head.xspeed;
+      head.position[1] += head.yspeed;
+    }
     
     return entities;
   }
