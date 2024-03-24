@@ -19,6 +19,7 @@ export default function App() {
   return (
     <View style={styles.container}>
     <View style={styles.canvas}>
+      <Text style={styles.title}>Anaconda</Text>
       <GameEngine
               ref={engine}
               style={styles.board}
@@ -34,9 +35,9 @@ export default function App() {
                 },
                 food: {
                   position: [
-                    randomPositions(0, Constants.GRID_SIZE - 1),
-                    randomPositions(0, Constants.GRID_SIZE - 1),
-                    randomPositions(0, Constants.GRID_SIZE - 1),
+                    randomPositions(0, Constants.GRID_SIZE - 2),
+                    randomPositions(0, Constants.GRID_SIZE - 2),
+                    randomPositions(0, Constants.GRID_SIZE - 2),
                   ],
                   size: Constants.CELL_SIZE,
                   renderer: <Food />,
@@ -80,6 +81,10 @@ const styles = StyleSheet.create({
     borderWidth: 5,
     borderColor: "black",
     borderStyle: "solid"
-  }
+  },
+  title: {
+
+  },
+  
 
 });
