@@ -1,10 +1,3 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- */
-
 import React from 'react';
 import type {PropsWithChildren} from 'react';
 import {
@@ -19,18 +12,27 @@ import {
 
 import {
   Colors,
-  DebugInstructions,
-  Header,
-  LearnMoreLinks,
-  ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
+
+// import { GameEngine } from "react-native-game-engine";
+import Head from "./components/Head";
+import Food from "./components/Food";
+import Tail from "./components/Tail";
+import Constants from "./Constants";
+
 
 type SectionProps = PropsWithChildren<{
   title: string;
 }>;
 
+const BoardSize = Constants.GRID_SIZE * Constants.CELL_SIZE;
+
 function Section({children, title}: SectionProps): React.JSX.Element {
   const isDarkMode = useColorScheme() === 'dark';
+  const randomPositions = (min: number, max: number) => {
+    return Math.floor(Math.random() * (max - min + 1) + min);
+  };
+
   return (
     <View style={styles.sectionContainer}>
       <Text
@@ -71,25 +73,49 @@ function App(): React.JSX.Element {
       <ScrollView
         contentInsetAdjustmentBehavior="automatic"
         style={backgroundStyle}>
-        <Header />
         <View
           style={{
             backgroundColor: isDarkMode ? Colors.black : Colors.white,
           }}>
-          <Section title="Step One">
+          <Section title="Anaconda">
             Edit <Text style={styles.highlight}>App.tsx</Text> to change this
-            screen and then come back to see your edits.
+            screen and then come back to see your edits. {BoardSize}
           </Section>
-          <Section title="See Your Changes">
-            <ReloadInstructions />
+          <Section title="play">
+             {/* <View style={styles.container}> */}
+              <View style={styles.canvas}>
+                {/* <GameEngine
+                  ref={engine}
+                  style={styles.board}
+                  entities={{
+                    head: {
+                      position: [0, 0],
+                      size: Constants.CELL_SIZE,
+                      updateFrequency: 10,
+                      nextMove: 10,
+                      xspeed: 0,
+                      yspeed: 0,
+                      renderer: <Head />,
+                    },
+                    food: {
+                      position: [
+                        randomPositions(0, Constants.GRID_SIZE - 2),
+                        randomPositions(0, Constants.GRID_SIZE - 2),
+                        randomPositions(0, Constants.GRID_SIZE - 2),
+                      ],
+                      size: Constants.CELL_SIZE,
+                      renderer: <Food />,
+                    },
+                    tail: {
+                      size: Constants.CELL_SIZE,
+                      elements: [],
+                      renderer: <Tail />,
+                    },
+                  }}
+                /> */}
+              {/* </View> */}
+            </View>
           </Section>
-          <Section title="Debug">
-            <DebugInstructions />
-          </Section>
-          <Section title="Learn More">
-            Read the docs to discover what to do next:
-          </Section>
-          <LearnMoreLinks />
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -112,6 +138,45 @@ const styles = StyleSheet.create({
   },
   highlight: {
     fontWeight: '700',
+  },
+  container: {
+    flex: 1,
+    backgroundColor: "#B84A62",
+    alignSelf: 'stretch',
+    textAlign: 'center',
+    alignItems: "center",
+    justifyContent: "center",
+    padding: 10,
+  },
+  canvas: {
+    flex: 1,
+    alignSelf: 'stretch',
+    textAlign: 'center',
+    backgroundColor: "#ECA400",
+    alignItems: "center",
+    justifyContent: "center",
+    padding: 50,
+    borderRadius: 20,
+    borderWidth: 10,
+    borderColor: "#4C243B",
+    borderStyle: "solid",
+  },
+  board: {
+    width: BoardSize,
+    height: BoardSize,
+    flex: null,
+    backgroundColor: "#EFE6E8",
+    borderRadius: 20,
+    borderWidth: 5,
+    borderColor: "#4C243B",
+    borderStyle: "solid",
+    padding: 2,
+  },
+  title: {
+    color: "#4C243B",
+    fontSize: 20,
+    fontWeight: "900",
+    padding: 10,
   },
 });
 

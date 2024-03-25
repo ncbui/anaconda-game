@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Anaconda</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="snake.css">
+</head>
+
+<body>
+    <main>
+        <nav> <a href="https://ncbui.github.io"><i class="fa fa-caret-left" aria-hidden="true"> Back to Cam's portfolio</i></a></nav>
+        <section class="col-12 col-sm-8 col-md-6 col-lg-4 mx-auto text-center">
+            <h1> Anaconda </h1>
+            <p> Choose your snake. 
+                <br />
+                Use the arrow keys to guide your snake to food.
+                Eat well and outlive the other snake.
+            </p>
+        </section>
+        <section id="select-mode" class="col-12 mx-auto text-center">
+            <div class="dropdown show col-12 col-md-8 mx-auto">
+                <button id="dropdownMenuLink" 
+                class="btn btn-secondary dropdown-toggle" 
+                role="button" 
+                data-toggle="dropdown" 
+                aria-haspopup="true" 
+                aria-expanded="false"
+                size="sm">
+                    <!--button message will be here-->
+                </button>
+                <div class="dropdown-menu" aria-labelledby="dLabel">
+                    <a class="dropdown-item dropdown-classic" href="#">Classic</a>
+                    <a class="dropdown-item dropdown-helpful" href="#">Helpful</a>
+                    <a class="dropdown-item dropdown-chaotic" href="#">Chaotic</a>
+                </div>
+                <button id="start" size="md" class="btn">
+                    <!--buttom message will be here-->
+                </button>
+            </div>
+
+            <div id="boards" class="col-12 mx-auto text-center">
+                <canvas id="board">
+                    <!-- game will be here -->
+                </canvas>
+            </div>
+        </section>
+    </main>
+<footer>
+    <section class="col-12 col-md-6 mx-auto text-center text-muted fixed-bottom">
+        Learn more about this project <a href="https://github.com/ncbui/Anaconda-game">here</a>
+    </section>
+</footer>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+    integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+    crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"
+    integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN"
+    crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.min.js"
+    integrity="sha384-w1Q4orYjBQndcko6MimVbzY0tgp4pWB4lZ7lr30WKz0vr/aWKhXdBNmNb5D92v7s"
+    crossorigin="anonymous"></script>
+    <script src="./snake.js"></script>
+</body>
+</html>
