@@ -82,7 +82,7 @@ function App(): React.JSX.Element {
             screen and then come back to see your edits. {BoardSize}
           </Section>
           <Section title="play">
-             {/* <View style={styles.container}> */}
+             <View style={styles.container}>
               <View style={styles.canvas}>
                 {/* <GameEngine
                   ref={engine}
@@ -113,7 +113,7 @@ function App(): React.JSX.Element {
                     },
                   }}
                 /> */}
-              {/* </View> */}
+              </View>
             </View>
           </Section>
         </View>
@@ -142,42 +142,38 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#B84A62",
-    alignSelf: 'stretch',
-    textAlign: 'center',
     alignItems: "center",
     justifyContent: "center",
     padding: 10,
+    // width: (Constants.MAX_WIDTH-50),
+    // maxHeight: (Constants.MAX_HEIGHT-50),
+    borderRadius: 20,
   },
   canvas: {
     flex: 1,
-    alignSelf: 'stretch',
     textAlign: 'center',
+    width: (Constants.MAX_WIDTH-60),
+    height: (Constants.MAX_HEIGHT-60),
     backgroundColor: "#ECA400",
     alignItems: "center",
     justifyContent: "center",
-    padding: 50,
+    padding: 10,
     borderRadius: 20,
     borderWidth: 10,
     borderColor: "#4C243B",
     borderStyle: "solid",
   },
   board: {
-    width: BoardSize,
-    height: BoardSize,
-    flex: null,
+    width: (BoardSize-10),
+    height: (BoardSize-10),
+    // flex: null,
     backgroundColor: "#EFE6E8",
     borderRadius: 20,
     borderWidth: 5,
     borderColor: "#4C243B",
     borderStyle: "solid",
     padding: 2,
-  },
-  title: {
-    color: "#4C243B",
-    fontSize: 20,
-    fontWeight: "900",
-    padding: 10,
-  },
+  }
 });
 
 export default App;
