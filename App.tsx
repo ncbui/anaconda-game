@@ -24,6 +24,7 @@ import Constants from "./Constants";
 import Section from "./components/Common/section";
 import GameLoop from "./systems/GameLoop";
 import Controller from './components/Controller';
+import Reset from './components/Controller/reset';
 
 
 type SectionProps = PropsWithChildren<{
@@ -44,6 +45,29 @@ function App(): React.JSX.Element {
   const backgroundStyle = {
     backgroundColor: !isDarkMode ? Colors.darker : Colors.lighter,
   };
+  const resetGame = () => {
+      engine.current.swap({
+        head: {
+          position: [0, 0],
+          size: Constants.CELL_SIZE,
+          updateFrequency: 10,
+          nextMove: 10,
+          xspeed: 0,
+          yspeed: 0,
+          renderer: <Head />,
+        },
+        food: {
+          position: [
+            randomPositions(0, Constants.GRID_SIZE - 2),
+            randomPositions(0, Constants.GRID_SIZE - 2),
+            randomPositions(0, Constants.GRID_SIZE - 2),
+          ],
+          size: Constants.CELL_SIZE,
+          renderer: <Food />,
+        }
+      });
+      setIsGameRunning(true);
+    };
 
   return (
     <GestureHandlerRootView>
@@ -96,10 +120,9 @@ function App(): React.JSX.Element {
                       }
                     }}
                   /> 
-                
                 </View>
               <View style={styles.controller}>
-                <Controller engine={engine}/>
+                {isGameRunning ?  <Controller engine={engine}/> : <Reset onPress={resetGame}/> }
               </View>
               </View>
             </Section>
@@ -143,10 +166,10 @@ const styles = StyleSheet.create({
     borderStyle: "solid",
   },
   controller: {
-      flex: 1,
-      justifyContent: "flex-start",
-      alignSelf: "stretch",
-      alignItems: "flex-end",
+    flex: 1,
+    justifyContent: "flex-start",
+    alignSelf: "stretch",
+    alignItems: "flex-end",
   }
 });
 
