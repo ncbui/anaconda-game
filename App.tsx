@@ -14,7 +14,6 @@ import {
   Colors,
 } from 'react-native/Libraries/NewAppScreen';
 
-// import { GameEngine } from "react-native-game-engine";
 import Head from "./components/Head";
 import Food from "./components/Food";
 import Tail from "./components/Tail";
@@ -164,6 +163,7 @@ const styles = StyleSheet.create({
     borderStyle: "solid",
   },
   board: {
+    flex: 1,
     width: (BoardSize-10),
     height: (BoardSize-10),
     // flex: null,
