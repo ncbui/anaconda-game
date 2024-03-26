@@ -1,6 +1,6 @@
 
 import React from "react";
-import { View, StyleSheet } from "react-native";
+import { View, StyleSheet, Dimensions } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 
 export default function Controller({ engine }) {
@@ -30,7 +30,9 @@ export default function Controller({ engine }) {
 
 const styles = StyleSheet.create({
     controlContainer: {
-        marginTop: 10,
+        marginTop: 30,
+        padding: 0,
+        margin: 0,
     },
     controllerRow: {
         flexDirection: "row",
@@ -41,6 +43,6 @@ const styles = StyleSheet.create({
         backgroundColor: "#ECA400",
         width: 50,
         height: 50,
-        borderRadius: 50,
+        borderRadius: 50
     },
 })

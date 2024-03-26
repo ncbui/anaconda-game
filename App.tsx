@@ -7,7 +7,8 @@ import {
   StyleSheet,
   Text,
   useColorScheme,
-  View
+  View,
+  Dimensions
 } from 'react-native';
 
 import {
@@ -51,9 +52,9 @@ function App(): React.JSX.Element {
           barStyle={isDarkMode ? 'light-content' : 'dark-content'}
           backgroundColor={backgroundStyle.backgroundColor}
         />
-        <ScrollView
+        {/* <ScrollView
           contentInsetAdjustmentBehavior="automatic"
-          style={backgroundStyle}>
+          style={backgroundStyle}> */}
           <View
             style={{
               backgroundColor: isDarkMode ? Colors.black : Colors.white,
@@ -97,13 +98,13 @@ function App(): React.JSX.Element {
                   /> 
                 
                 </View>
-              <View>
+              <View style={styles.controller}>
                 <Controller engine={engine}/>
               </View>
               </View>
             </Section>
           </View>
-        </ScrollView>
+        {/* </ScrollView> */}
       </SafeAreaView>
     </GestureHandlerRootView>
   );
@@ -114,37 +115,42 @@ const styles = StyleSheet.create({
     fontWeight: '700',
   },
   container: {
-    flex: 1,
+    flex: 2,
     backgroundColor: "#B84A62",
     alignItems: "center",
+    alignSelf: "center",
     justifyContent: "center",
-    padding: 10,
+    padding: 20,
     borderRadius: 20,
   },
   canvas: {
     flex: 1,
     textAlign: 'center',
-    width: (Constants.MAX_WIDTH-60),
-    height: (Constants.MAX_HEIGHT-60),
+    // width: (Constants.MAX_WIDTH-80),
+    // height: (Constants.MAX_WIDTH-80),
     backgroundColor: "#ECA400",
     alignItems: "center",
     justifyContent: "center",
-    padding: 10,
+    padding: 5,
+    margin: 5,
     borderRadius: 20,
-    borderWidth: 10,
-    borderColor: "#4C243B",
-    borderStyle: "solid",
   },
   board: {
     flex: undefined,
-    width: (BoardSize-10),
-    height: (BoardSize-10),
+    width: (BoardSize-20),
+    height: (BoardSize-20),
     backgroundColor: "#EFE6E8",
     borderRadius: 20,
-    borderWidth: 5,
-    borderColor: "#4C243B",
+    padding: 3,
+    borderWidth: 2,
+    borderColor: "#B84A62",
     borderStyle: "solid",
-    padding: 2,
+  },
+  controller: {
+      flex: 1,
+      justifyContent: "flex-start",
+      alignSelf: "stretch",
+      alignItems: "flex-end",
   }
 });
 
