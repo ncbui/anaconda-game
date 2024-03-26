@@ -1,9 +1,8 @@
-
 import React from "react";
 import { View, StyleSheet, Text } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 
-export default function Reset({ onPress }) {
+export default function ResetButton({ onPress }) {
   return (
     <View style={styles.controlContainer}>
         <View style={styles.controllerRow}>
@@ -23,11 +22,13 @@ const styles = StyleSheet.create({
         marginTop: 30,
         padding: 0,
         margin: 0,
+        borderRadius: 20,
     },
     controllerRow: {
         flexDirection: "row",
         justifyContent: "center",
         alignItems: "center",
+        borderRadius: 20,
     },
     resetButton: {
         color: "purple",

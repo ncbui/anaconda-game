@@ -24,8 +24,9 @@ import Constants from "./Constants";
 import Section from "./components/Common/section";
 import GameLoop from "./systems/GameLoop";
 import Controller from './components/Controller';
-import Reset from './components/Controller/reset';
-
+import ResetButton from './components/Reset/button';
+import resetBoard from './components/Reset/board'
+import { randomPositions } from './components/Common/functions';
 
 type SectionProps = PropsWithChildren<{
   title: string;
@@ -38,39 +39,17 @@ function App(): React.JSX.Element {
   const [isGameRunning, setIsGameRunning] = useState(true);
   const engine = useRef(null);
   const isDarkMode = useColorScheme() === 'dark';
-  const randomPositions = (min: number, max: number) => {
-    return Math.floor(Math.random() * (max - min + 1) + min);
-    };
 
   const backgroundStyle = {
     backgroundColor: !isDarkMode ? Colors.darker : Colors.lighter,
   };
   const resetGame = () => {
-      engine.current.swap({
-        head: {
-          position: [0, 0],
-          size: Constants.CELL_SIZE,
-          updateFrequency: 10,
-          nextMove: 10,
-          xspeed: 0,
-          yspeed: 0,
-          renderer: <Head />,
-        },
-        food: {
-          position: [
-            randomPositions(0, Constants.GRID_SIZE - 2),
-            randomPositions(0, Constants.GRID_SIZE - 2),
-            randomPositions(0, Constants.GRID_SIZE - 2),
-          ],
-          size: Constants.CELL_SIZE,
-          renderer: <Food />,
-        }
-      });
+      engine.current.swap(resetBoard);
       setIsGameRunning(true);
     };
 
   return (
-    <GestureHandlerRootView>
+    <GestureHandlerRootView style={backgroundStyle}>
       <SafeAreaView style={backgroundStyle}>
         <StatusBar
           barStyle={isDarkMode ? 'light-content' : 'dark-content'}
@@ -122,7 +101,7 @@ function App(): React.JSX.Element {
                   /> 
                 </View>
               <View style={styles.controller}>
-                {isGameRunning ?  <Controller engine={engine}/> : <Reset onPress={resetGame}/> }
+                {isGameRunning ?  <Controller engine={engine}/> : <ResetButton onPress={resetGame}/> }
               </View>
               </View>
             </Section>
@@ -170,6 +149,7 @@ const styles = StyleSheet.create({
     justifyContent: "flex-start",
     alignSelf: "stretch",
     alignItems: "flex-end",
+    borderRadius: 20,
   }
 });
 
