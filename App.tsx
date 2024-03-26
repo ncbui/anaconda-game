@@ -1,4 +1,5 @@
-import React from 'react';
+import { GameEngine } from "react-native-game-engine";
+import React, { useRef } from 'react';
 import type {PropsWithChildren} from 'react';
 import {
   SafeAreaView,
@@ -18,6 +19,7 @@ import Head from "./components/Head";
 import Food from "./components/Food";
 import Tail from "./components/Tail";
 import Constants from "./Constants";
+import Section from "./components/Common/section";
 
 
 type SectionProps = PropsWithChildren<{
@@ -26,38 +28,13 @@ type SectionProps = PropsWithChildren<{
 
 const BoardSize = Constants.GRID_SIZE * Constants.CELL_SIZE;
 
-function Section({children, title}: SectionProps): React.JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
-  const randomPositions = (min: number, max: number) => {
-    return Math.floor(Math.random() * (max - min + 1) + min);
-  };
-
-  return (
-    <View style={styles.sectionContainer}>
-      <Text
-        style={[
-          styles.sectionTitle,
-          {
-            color: isDarkMode ? Colors.white : Colors.black,
-          },
-        ]}>
-        {title}
-      </Text>
-      <Text
-        style={[
-          styles.sectionDescription,
-          {
-            color: isDarkMode ? Colors.light : Colors.dark,
-          },
-        ]}>
-        {children}
-      </Text>
-    </View>
-  );
-}
 
 function App(): React.JSX.Element {
   const isDarkMode = useColorScheme() === 'dark';
+  const engine = useRef(null);
+  const randomPositions = (min: number, max: number) => {
+    return Math.floor(Math.random() * (max - min + 1) + min);
+    };
 
   const backgroundStyle = {
     backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
@@ -83,7 +60,7 @@ function App(): React.JSX.Element {
           <Section title="play">
              <View style={styles.container}>
               <View style={styles.canvas}>
-                {/* <GameEngine
+                <GameEngine
                   ref={engine}
                   style={styles.board}
                   entities={{
@@ -111,7 +88,7 @@ function App(): React.JSX.Element {
                       renderer: <Tail />,
                     },
                   }}
-                /> */}
+                />
               </View>
             </View>
           </Section>
