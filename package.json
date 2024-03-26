@@ -1,5 +1,5 @@
 {
-  "name": "AnacondaGame",
+  "name": "anaconda-game",
   "version": "0.0.1",
   "private": true,
   "scripts": {
@@ -11,7 +11,8 @@
   },
   "dependencies": {
     "react": "18.2.0",
-    "react-native": "0.73.6"
+    "react-native": "0.73.6",
+    "ts-jest": "^29.1.2"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
@@ -34,5 +35,18 @@
   },
   "engines": {
     "node": ">=18"
+  },
+  "jest": {
+    "preset": "react-native",
+    "moduleFileExtensions": [
+      "js",
+      "jsx",
+      "tsx",
+      "ts"
+    ],
+    "rootDir": "./__tests__/",
+    "transform": {
+      "^.+\\.(ts|tsx)?$": "ts-jest"
+    }
   }
 }
