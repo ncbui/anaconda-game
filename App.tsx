@@ -8,7 +8,6 @@ import {
   Text,
   useColorScheme,
   View,
-  Dimensions,
   Dimensions
 } from 'react-native';
 
@@ -116,7 +115,7 @@ const styles = StyleSheet.create({
     fontWeight: '700',
   },
   container: {
-    flex: 2,
+    flex: 1,
     backgroundColor: "#B84A62",
     alignItems: "center",
     alignSelf: "center",
@@ -125,14 +124,10 @@ const styles = StyleSheet.create({
     borderRadius: 20,
   },
   canvas: {
-    flex: 1,
-    textAlign: 'center',
-    // width: (Constants.MAX_WIDTH-80),
-    // height: (Constants.MAX_WIDTH-80),
     backgroundColor: "#ECA400",
     alignItems: "center",
     justifyContent: "center",
-    padding: 5,
+    padding: 10,
     margin: 5,
     borderRadius: 20,
   },
