@@ -51,6 +51,16 @@ export default function (entities, { events, dispatch }) {
           } else {
           head.position[0] += head.xspeed;
           head.position[1] += head.yspeed;
+
+          if (
+            head.position[0] == food.position[0] &&
+            head.position[1] == food.position[1]
+          ) {
+            food.position = [
+              randomPositions(0, Constants.GRID_SIZE - 2),
+              randomPositions(0, Constants.GRID_SIZE - 2),
+            ];
+          }
         }
     }
   

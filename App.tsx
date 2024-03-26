@@ -25,6 +25,7 @@ import Section from "./components/Common/section";
 import GameLoop from "./systems/GameLoop";
 import Controller from './components/Controller';
 import ResetButton from './components/Reset/button';
+import { randomPositions } from './components/Common/functions';
 
 
 type SectionProps = PropsWithChildren<{
@@ -38,10 +39,6 @@ function App(): React.JSX.Element {
   const [isGameRunning, setIsGameRunning] = useState(true);
   const engine = useRef(null);
   const isDarkMode = useColorScheme() === 'dark';
-  const randomPositions = (min: number, max: number) => {
-    return Math.floor(Math.random() * (max - min + 1) + min);
-    };
-
   const backgroundStyle = {
     backgroundColor: !isDarkMode ? Colors.darker : Colors.lighter,
   };
@@ -64,7 +61,7 @@ function App(): React.JSX.Element {
           ],
           size: Constants.CELL_SIZE,
           renderer: <Food />,
-        }
+        },
       });
       setIsGameRunning(true);
     };
@@ -175,3 +172,4 @@ const styles = StyleSheet.create({
 });
 
 export default App;
+
