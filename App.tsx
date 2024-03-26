@@ -8,6 +8,7 @@ import {
   Text,
   useColorScheme,
   View,
+  Dimensions,
   Dimensions
 } from 'react-native';
 
