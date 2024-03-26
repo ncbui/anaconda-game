@@ -2,8 +2,7 @@ import React, { useRef } from 'react';
 import {
   Text,
   useColorScheme,
-  View, 
-  StyleSheet
+  View, StyleSheet
 } from 'react-native';
 
 import {
