@@ -1,6 +1,7 @@
 import React from "react";
 import { View } from "react-native";
 import Constants from "../../Constants";
+import { styles } from "../../systems/Styles";
 export default function Tail({ elements, position, size }) {
   const tailList = elements.map((el, idx) => (
     <View

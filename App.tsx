@@ -27,6 +27,7 @@ import GameLoop from "./systems/GameLoop";
 import Controller from './components/Controller';
 import ResetButton from './components/Reset/button';
 import { randomPositions } from './components/Common/functions';
+import { styles } from './systems/Styles';
 
 
 type SectionProps = PropsWithChildren<{
@@ -123,7 +124,7 @@ function App(): React.JSX.Element {
                   /> 
                 </View>
               <View style={styles.controller}>
-                {isGameRunning ?  <Controller engine={engine} setEngine={setcurrentEngine}/> : <ResetButton onPress={resetGame}/> }
+                {isGameRunning ?  <Controller engine={engine} /> : <ResetButton onPress={resetGame}/> }
               </View>
               </View>
             </Section>
@@ -133,46 +134,5 @@ function App(): React.JSX.Element {
     </GestureHandlerRootView>
   );
 }
-
-const styles = StyleSheet.create({
-  highlight: {
-    fontWeight: '700',
-  },
-  container: {
-    flex: 1,
-    backgroundColor: "#B84A62",
-    alignItems: "center",
-    alignSelf: "center",
-    justifyContent: "center",
-    padding: 20,
-    borderRadius: 20,
-  },
-  canvas: {
-    backgroundColor: "#ECA400",
-    alignItems: "center",
-    justifyContent: "center",
-    padding: 10,
-    margin: 10,
-    borderRadius: 20,
-  },
-  board: {
-    flex: undefined,
-    width: (BoardSize-20),
-    height: (BoardSize-20),
-    backgroundColor: "#EFE6E8",
-    borderRadius: 20,
-    padding: 3,
-    borderWidth: 2,
-    borderColor: "#B84A62",
-    borderStyle: "solid",
-  },
-  controller: {
-    flex: 1,
-    justifyContent: "flex-start",
-    alignSelf: "stretch",
-    alignItems: "flex-end",
-    borderRadius: 20,
-  }
-});
 
 export default App;
