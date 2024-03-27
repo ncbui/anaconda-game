@@ -77,4 +77,4 @@ Changes to scoring:
 ## Reboot 2024
 
 - Converted to React Native, ios app. App runs, but delay with controls. It could be related to how the engine is rendered in App component. Looking into: changing default gesture delay; useRef vs useState for game; forcing immediate loop update / re-render with gesture. Update: Fixed by using TapGestureHandler component instead of TouchOpacity. 
-- 
+- Basic snake ios game completed with react-native. Ready to containerize and for NPC anaconda.
