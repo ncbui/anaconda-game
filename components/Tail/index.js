@@ -12,7 +12,8 @@ export default function Tail({ elements, position, size }) {
         position: "absolute",
         left: el[0] * size,
         top: el[1] * size,
-        backgroundColor: "red",
+        backgroundColor: "#54457f",
+        borderRadius: 10,
       }}
     />
   ));

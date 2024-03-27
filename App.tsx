@@ -16,7 +16,7 @@ import { GameEngine } from "react-native-game-engine";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import Head from "./components/Head";
 import Food from "./components/Food";
-// import Tail from "./components/Tail";
+import Tail from "./components/Tail";
 import Constants from "./Constants";
 import Section from "./components/Common/section";
 import GameLoop from "./systems/GameLoop";
@@ -62,6 +62,11 @@ function App(): React.JSX.Element {
           size: Constants.CELL_SIZE,
           renderer: <Food />,
         },
+        tail: {
+          size: Constants.CELL_SIZE,
+          elements: [],
+          renderer: <Tail />,
+        },
       });
       setcurrentEngine(engine);
       setIsGameRunning(true);
@@ -105,7 +110,12 @@ function App(): React.JSX.Element {
                         ],
                         size: Constants.CELL_SIZE,
                         renderer: <Food />,
-                      }
+                      },
+                      tail: {
+                        size: Constants.CELL_SIZE,
+                        elements: [],
+                        renderer: <Tail />,
+                      },
                     }}
                     systems={[GameLoop]}
                     running={isGameRunning}
