@@ -54,11 +54,7 @@
     add method to find the neighbors of a point
     implement priority queue using an array as a heap (math is rad)
 
-
-    
-
-
-### Upcoming features
+## Upcoming features
 
 Adding an A* search algo to the snakeNPC to prevent it from trapping itself. 
     See:
@@ -76,5 +72,9 @@ Path recalculation:
     https://www.redblobgames.com/pathfinding/early-exit/
 
 Changes to scoring:
-- Penalty to the snake that crashed
-- ?? Track user's highest score with browser?
+- Track user's highest score with browser
+
+## Reboot 2024
+
+- Converted to React Native, ios app. App runs, but delay with controls. It could be related to how the engine is rendered in App component. Looking into: changing default gesture delay; useRef vs useState for game; forcing immediate loop update / re-render with gesture. Update: Fixed by using TapGestureHandler component instead of TouchOpacity. 
+- Basic snake ios game completed with react-native. Ready to containerize and for NPC anaconda.
