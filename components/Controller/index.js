@@ -3,25 +3,34 @@ import React from "react";
 import { View, StyleSheet, Dimensions } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 
-export default function Controller({ engine }) {
+export default function Controller({ engine, setEngine }) {
+
   return (
     <View style={styles.controlContainer}>
             <View style={styles.controllerRow}>
-                <TouchableOpacity onPress={() => engine.current.dispatch("move-up")}>
+                <TouchableOpacity onPress={() => {
+                    engine.current.dispatch("move-up");
+                    setEngine(engine)}}>
                     <View style={styles.controlBtn} />
                 </TouchableOpacity>
             </View>
             <View style={styles.controllerRow}>
-                <TouchableOpacity onPress={() => engine.current.dispatch("move-left")}>
+                <TouchableOpacity onPress={() => {
+                    engine.current.dispatch("move-left");
+                    setEngine(engine)}}>
                     <View style={styles.controlBtn} />
                 </TouchableOpacity>
             <View style={[styles.controlBtn, { backgroundColor: null }]} />
-                <TouchableOpacity onPress={() => engine.current.dispatch("move-right")} >
+                <TouchableOpacity onPress={() => {
+                    engine.current.dispatch("move-right");
+                    setEngine(engine)}} >
                     <View style={styles.controlBtn} />
                 </TouchableOpacity>
             </View>
             <View style={styles.controllerRow}>
-                <TouchableOpacity onPress={() => engine.current.dispatch("move-down")}>
+                <TouchableOpacity onPress={() => {
+                    engine.current.dispatch("move-down");
+                    setEngine(engine)}}>
                     <View style={styles.controlBtn} />
                 </TouchableOpacity>
             </View>

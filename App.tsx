@@ -38,14 +38,16 @@ const BoardSize = Constants.GRID_SIZE * Constants.CELL_SIZE;
 function App(): React.JSX.Element {
   const [isGameRunning, setIsGameRunning] = useState(true);
   const engine = useRef(null);
+  const [currentEngine, setcurrentEngine] = useState(useRef.current)
   const isDarkMode = useColorScheme() === 'dark';
+
   const backgroundStyle = {
     backgroundColor: !isDarkMode ? Colors.darker : Colors.lighter,
   };
   const resetGame = () => {
       engine.current.swap({
         head: {
-          position: [0, 0],
+          position: [1, 1],
           size: Constants.CELL_SIZE,
           updateFrequency: 10,
           nextMove: 10,
@@ -63,6 +65,7 @@ function App(): React.JSX.Element {
           renderer: <Food />,
         },
       });
+      setcurrentEngine(engine);
       setIsGameRunning(true);
     };
 
@@ -78,7 +81,7 @@ function App(): React.JSX.Element {
           style={backgroundStyle}> */}
           <View
             style={{
-              backgroundColor: !isDarkMode ? Colors.black : Colors.white,
+              backgroundColor: !isDarkMode ? '#4c243b' : Colors.white,
             }}>
             <Section title="Anaconda">
               <View style={styles.container}>
@@ -119,7 +122,7 @@ function App(): React.JSX.Element {
                   /> 
                 </View>
               <View style={styles.controller}>
-                {isGameRunning ?  <Controller engine={engine}/> : <ResetButton onPress={resetGame}/> }
+                {isGameRunning ?  <Controller engine={engine} setEngine={setcurrentEngine}/> : <ResetButton onPress={resetGame}/> }
               </View>
               </View>
             </Section>
@@ -172,4 +175,3 @@ const styles = StyleSheet.create({
 });
 
 export default App;
-

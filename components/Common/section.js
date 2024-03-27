@@ -17,7 +17,7 @@ export default function Section({children, title}: SectionProps): React.JSX.Elem
         style={[
           styles.sectionTitle,
           {
-            color: !isDarkMode ? Colors.white : Colors.black,
+            color: !isDarkMode ? Colors.white : '#4c243b',
           },
         ]}>
         {title}
