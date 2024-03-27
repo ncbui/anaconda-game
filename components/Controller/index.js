@@ -1,38 +1,34 @@
 
 import React from "react";
 import { View, StyleSheet, Dimensions } from "react-native";
-import { TouchableOpacity } from "react-native-gesture-handler";
+import { TapGestureHandler } from "react-native-gesture-handler";
 
-export default function Controller({ engine, setEngine }) {
+export default function Controller({ engine }) {
 
   return (
     <View style={styles.controlContainer}>
             <View style={styles.controllerRow}>
-                <TouchableOpacity onPress={() => {
-                    engine.current.dispatch("move-up");
-                    setEngine(engine)}}>
+                <TapGestureHandler onHandlerStateChange={() => {
+                    engine.current.dispatch("move-up");}}>
                     <View style={styles.controlBtn} />
-                </TouchableOpacity>
+                </TapGestureHandler>
             </View>
             <View style={styles.controllerRow}>
-                <TouchableOpacity onPress={() => {
-                    engine.current.dispatch("move-left");
-                    setEngine(engine)}}>
+                <TapGestureHandler onHandlerStateChange={() => {
+                    engine.current.dispatch("move-left");}}>
                     <View style={styles.controlBtn} />
-                </TouchableOpacity>
+                </TapGestureHandler>
             <View style={[styles.controlBtn, { backgroundColor: null }]} />
-                <TouchableOpacity onPress={() => {
-                    engine.current.dispatch("move-right");
-                    setEngine(engine)}} >
+                <TapGestureHandler onHandlerStateChange={() => {
+                    engine.current.dispatch("move-right");}} >
                     <View style={styles.controlBtn} />
-                </TouchableOpacity>
+                </TapGestureHandler>
             </View>
             <View style={styles.controllerRow}>
-                <TouchableOpacity onPress={() => {
-                    engine.current.dispatch("move-down");
-                    setEngine(engine)}}>
+                <TapGestureHandler onHandlerStateChange={() => {
+                    engine.current.dispatch("move-down");}}>
                     <View style={styles.controlBtn} />
-                </TouchableOpacity>
+                </TapGestureHandler>
             </View>
         </View>
     )}
