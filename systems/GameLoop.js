@@ -11,7 +11,7 @@ const isOutofBounds = (head) => {
     head.position[1] + head.yspeed < 0 ||
     head.position[1] + head.yspeed >= Constants.GRID_SIZE-1)
 }
-const isEatSelf = (head, tail) => {
+const checkEatSelf = (head, tail) => {
   tail.elements.forEach((tail, idx) => {
             if (
               head.position[0] === tail[0] &&
@@ -20,7 +20,7 @@ const isEatSelf = (head, tail) => {
               dispatch("game-over");
           });
 }
-const isEatFood = (head, food) => {
+const checkEatFood = (head, food) => {
   return (
     head.position[0] == food.position[0] &&
     head.position[1] == food.position[1]
@@ -69,8 +69,8 @@ export default function (entities, { events, dispatch }) {
           tail.elements.pop();
           head.position[0] += head.xspeed;
           head.position[1] += head.yspeed;
-          isEatSelf(head, tail);
-          if ( isEatFood(head,food)) {
+          checkEatSelf(head, tail);
+          if ( checkEatFood(head,food)) {
             tail.elements = [
               [head.position[0], head.position[1]],
               ...tail.elements,
