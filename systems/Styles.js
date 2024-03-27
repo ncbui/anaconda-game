@@ -1,11 +1,5 @@
 import { StyleSheet } from "react-native";
 import Constants from "../Constants";
-// export default {
-//   MAX_WIDTH: Dimensions.get("screen").width,
-//   MAX_HEIGHT: Dimensions.get("screen").width,
-//   GRID_SIZE: 15,
-//   CELL_SIZE: 20
-// };
 
 const BoardSize = Constants.GRID_SIZE * Constants.CELL_SIZE;
 

@@ -1,11 +1,10 @@
 
 import React from "react";
-import { View, StyleSheet, Dimensions } from "react-native";
+import { View } from "react-native";
 import { TapGestureHandler } from "react-native-gesture-handler";
 import { styles } from "../../systems/Styles";
 
 export default function Controller({ engine }) {
-
   return (
     <View style={styles.controlContainer}>
             <View style={styles.controllerRow}>
