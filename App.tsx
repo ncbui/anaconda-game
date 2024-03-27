@@ -58,9 +58,9 @@ function App(): React.JSX.Element {
         },
         food: {
           position: [
-            randomPositions(0, Constants.GRID_SIZE - 2),
-            randomPositions(0, Constants.GRID_SIZE - 2),
-            randomPositions(0, Constants.GRID_SIZE - 2),
+            randomPositions(0, Constants.GRID_SIZE - 3),
+            randomPositions(0, Constants.GRID_SIZE - 3),
+            randomPositions(0, Constants.GRID_SIZE - 3),
           ],
           size: Constants.CELL_SIZE,
           renderer: <Food />,
@@ -102,9 +102,9 @@ function App(): React.JSX.Element {
                       },
                       food: {
                         position: [
-                          randomPositions(0, Constants.GRID_SIZE - 2),
-                          randomPositions(0, Constants.GRID_SIZE - 2),
-                          randomPositions(0, Constants.GRID_SIZE - 2),
+                          randomPositions(0, Constants.GRID_SIZE - 3),
+                          randomPositions(0, Constants.GRID_SIZE - 3),
+                          randomPositions(0, Constants.GRID_SIZE - 3),
                         ],
                         size: Constants.CELL_SIZE,
                         renderer: <Food />,
@@ -152,7 +152,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     padding: 10,
-    margin: 5,
+    margin: 10,
     borderRadius: 20,
   },
   board: {
