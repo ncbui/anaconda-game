@@ -8,7 +8,8 @@ import {
   Text,
   useColorScheme,
   View,
-  Dimensions
+  Dimensions,
+  Alert
 } from 'react-native';
 
 import {
@@ -114,7 +115,7 @@ function App(): React.JSX.Element {
                     onEvent={(e) => {
                       switch (e) {
                         case "game-over":
-                          alert("Game over!");
+                          Alert.alert("Game over!");
                           setIsGameRunning(false);
                           return;
                       }
